@@ -43,6 +43,7 @@ android {
 }
 
 dependencies {
+    implementation("io.coil-kt:coil-compose:2.2.2")
     implementation ("com.google.android.exoplayer:exoplayer:2.18.5")
 
     // Compose BOM

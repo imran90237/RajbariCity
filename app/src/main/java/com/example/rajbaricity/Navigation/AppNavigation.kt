@@ -1,24 +1,29 @@
 package com.example.rajbaricity.Navigation
-
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import androidx.navigation.NavType
-import com.example.rajbaricity.DetailsScreen
-import com.example.rajbaricity.HomeScreen
-import com.example.rajbaricity.RajbariViewModel
-import com.example.rajbaricity.ui.StationDetailScreen
+import com.example.rajbaricity.*
+import com.example.rajbaricity.EditProfileScreen
 
 @Composable
-fun AppNavigation(
-    navController: NavHostController,
-    viewModel: RajbariViewModel
-) {
-    NavHost(navController = navController, startDestination = "home") {
+fun AppNavGraph(navController: NavHostController, viewModel: RajbariViewModel) {
+    val startDestination = if (!viewModel.isRegistered) "register"
+    else if (viewModel.loggedInUserName == null) "login"
+    else "home"
 
-        // Home Screen
+    NavHost(navController = navController, startDestination = startDestination) {
+
+        composable("register") {
+            RegistrationScreen(navController, viewModel)
+        }
+
+        composable("login") {
+            LoginScreen(navController, viewModel)
+        }
+
         composable("home") {
             HomeScreen(
                 sections = viewModel.sections,
@@ -28,7 +33,15 @@ fun AppNavigation(
             )
         }
 
-        // Details Screen with dynamic route param
+        composable("edit_profile") {
+            EditProfileScreen(navController = navController, viewModel = viewModel)
+        }
+
+        composable("notifications") {
+            NotificationScreen()
+        }
+
+
         composable(
             "details/{route}",
             arguments = listOf(navArgument("route") { type = NavType.StringType })
@@ -40,29 +53,13 @@ fun AppNavigation(
                 onHomeClick = {
                     navController.navigate("home") {
                         launchSingleTop = true
-                        popUpTo("home") { inclusive = false }
                     }
                 },
                 viewModel = viewModel
             )
         }
-
-        // Station Detail Screen
-        composable(
-            "station_detail/{stationName}",
-            arguments = listOf(navArgument("stationName") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val stationName = backStackEntry.arguments?.getString("stationName") ?: ""
-            StationDetailScreen(
-                stationName = stationName,
-                navController = navController
-            )
-        }
     }
 }
-
-
-
 
 
 //package com.example.rajbaricity.Navigation

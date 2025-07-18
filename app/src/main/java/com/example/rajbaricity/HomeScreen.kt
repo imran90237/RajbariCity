@@ -43,7 +43,7 @@ fun HomeScreen(
 
         Image(
             painter = painterResource(id = R.drawable.ad_banner),
-            contentDescription = "Ad Banner",
+            contentDescription = "বিজ্ঞাপন ব্যানার",
             modifier = Modifier
                 .fillMaxWidth()
                 .height(180.dp)
@@ -58,9 +58,10 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize()
         ) {
             items(sections) { section ->
-                SectionCard(section = section) {
-                    onSectionClick(section.route)
-                }
+                SectionCard(
+                    section = section,
+                    onClick = { onSectionClick(section.route) }
+                )
             }
         }
     }
@@ -78,7 +79,7 @@ fun SectionCard(
             .clickable { onClick() },
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F0F0)),
-        elevation = CardDefaults.cardElevation(6.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
     ) {
         Column(
             modifier = Modifier
