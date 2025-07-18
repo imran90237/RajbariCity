@@ -34,8 +34,7 @@ data class PainSpecialist(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    // val chamber3: String, // Commented out as requested
+    // val chamber2: String, // Deleted as requested
     val mapLink: String
 )
 
@@ -54,8 +53,7 @@ fun PainScreen() {
                     workplace = "রাজধানী হাসপাতাল",
                     diseasesTreated = "মাংসপেশির ব্যথা, স্নায়ুর ব্যথা, ক্রনিক পেইন",
                     chamber1 = "রাজধানী ক্লিনিক, রুম ১০",
-                    chamber2 = "সিটি মেডিকেল, রুম ৫",
-                    // chamber3 = "মেডিসিনাল হাসপাতাল", // Commented out
+                    // chamber2 = "সিটি মেডিকেল, রুম ৫", // Deleted as requested
                     mapLink = "https://maps.app.goo.gl/your-pain-location"
                 )
             )
@@ -118,8 +116,7 @@ fun PainScreen() {
 
                         Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
                         Text("১. ${specialist.chamber1}")
-                        Text("২. ${specialist.chamber2}")
-                        // Text("৩. ${specialist.chamber3}") // Commented out
+                        // Text("২. ${specialist.chamber2}") // Deleted
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -196,8 +193,7 @@ fun AddPainSpecialistForm(
     var workplace by remember { mutableStateOf("") }
     var diseasesTreated by remember { mutableStateOf("") }
     var chamber1 by remember { mutableStateOf("") }
-    var chamber2 by remember { mutableStateOf("") }
-    // var chamber3 by remember { mutableStateOf("") } // Commented out
+    // var chamber2 by remember { mutableStateOf("") } // Deleted
     var mapLink by remember { mutableStateOf("") }
 
     var photoUri by remember { mutableStateOf<Uri?>(null) }
@@ -234,8 +230,7 @@ fun AddPainSpecialistForm(
         OutlinedTextField(workplace, { workplace = it }, label = { Text("কর্মস্থল") })
         OutlinedTextField(diseasesTreated, { diseasesTreated = it }, label = { Text("চিকিৎসিত রোগসমূহ") })
         OutlinedTextField(chamber1, { chamber1 = it }, label = { Text("চেম্বার ১") })
-        OutlinedTextField(chamber2, { chamber2 = it }, label = { Text("চেম্বার ২") })
-        // OutlinedTextField(chamber3, { chamber3 = it }, label = { Text("চেম্বার ৩") }) // Commented out
+        // OutlinedTextField(chamber2, { chamber2 = it }, label = { Text("চেম্বার ২") }) // Deleted
         OutlinedTextField(mapLink, { mapLink = it }, label = { Text("Google Map লিংক") })
 
         Row(
@@ -254,8 +249,7 @@ fun AddPainSpecialistForm(
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = chamber2,
-                            // chamber3 = chamber3, // Commented out
+                            // chamber2 = chamber2, // Deleted
                             mapLink = mapLink
                         )
                     )
@@ -266,8 +260,7 @@ fun AddPainSpecialistForm(
                     workplace = ""
                     diseasesTreated = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = "" // Commented out
+                    // chamber2 = "" // Deleted
                     mapLink = ""
                     photoUri = null
                 }
@@ -277,15 +270,13 @@ fun AddPainSpecialistForm(
 
             OutlinedButton(
                 onClick = {
-                    // Reset fields & cancel
                     name = ""
                     specialty = ""
                     qualification = ""
                     workplace = ""
                     diseasesTreated = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = "" // Commented out
+                    // chamber2 = "" // Deleted
                     mapLink = ""
                     photoUri = null
                     onCancel()

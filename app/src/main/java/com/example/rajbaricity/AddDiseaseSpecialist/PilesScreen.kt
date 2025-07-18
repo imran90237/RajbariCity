@@ -34,8 +34,6 @@ data class PilesDoctor(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    val chamber3: String,
     val mapLink: String
 )
 
@@ -54,8 +52,6 @@ fun PilesScreen() {
                     workplace = "রাজারবাগ সাধারণ হাসপাতাল",
                     diseasesTreated = "পাইলস, ফিস্টুলা, ফিশার",
                     chamber1 = "রাজারবাগ ক্লিনিক, রুম ৩",
-                    chamber2 = "সিটি হাসপাতাল, OPD",
-                    chamber3 = "নিউ লাইফ হাসপাতাল",
                     mapLink = "https://maps.app.goo.gl/your-piles-location"
                 )
             )
@@ -105,10 +101,8 @@ fun PilesScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
-                        Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        Text("৩. ${doctor.chamber3}")
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
+                        Text(doctor.chamber1)
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -235,11 +229,10 @@ fun AddPilesDoctorForm(onDoctorAdded: (PilesDoctor) -> Unit, onCancel: () -> Uni
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = "",
-                            chamber3 = "",
                             mapLink = mapLink
                         )
                     )
+                    // Clear all fields after saving
                     name = ""
                     specialty = ""
                     qualification = ""

@@ -1,5 +1,3 @@
-
-
 package com.example.rajbaricity.AddDiseaseSpecialist
 
 import android.content.Intent
@@ -36,8 +34,6 @@ data class CancerDoctor(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    val chamber3: String,
     val mapLink: String
 )
 
@@ -56,8 +52,6 @@ fun CancerScreen() {
                     workplace = "জাতীয় ক্যান্সার গবেষণা ইনস্টিটিউট",
                     diseasesTreated = "ব্রেস্ট ক্যান্সার, লিভার ক্যান্সার, লাং ক্যান্সার",
                     chamber1 = "রাজারবাগ ক্যান্সার ক্লিনিক",
-                    chamber2 = "ডায়াবেটিক হাসপাতাল, রুম ৫",
-                    chamber3 = "হেলথ কেয়ার ডায়াগনস্টিক",
                     mapLink = "https://maps.app.goo.gl/your-cancer-location"
                 )
             )
@@ -107,10 +101,8 @@ fun CancerScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
-                        Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        Text("৩. ${doctor.chamber3}")
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
+                        Text("• ${doctor.chamber1}")
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -145,9 +137,9 @@ fun CancerScreen() {
                 IconButton(
                     onClick = { showForm = true },
                     modifier = Modifier
-                        .size(48.dp) // Make the whole IconButton bigger (default is 24.dp)
+                        .size(48.dp)
                         .background(
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), // light primary background
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
                             shape = CircleShape
                         )
                 ) {
@@ -155,14 +147,11 @@ fun CancerScreen() {
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add Doctor",
                         tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(30.dp)  // Make the icon bigger (default is 24.dp)
+                        modifier = Modifier.size(30.dp)
                     )
                 }
             }
-
         }
-
-
 
         if (showForm) {
             AddCancerDoctorForm(
@@ -240,8 +229,6 @@ fun AddCancerDoctorForm(onDoctorAdded: (CancerDoctor) -> Unit, onCancel: () -> U
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = "",
-                            chamber3 = "",
                             mapLink = mapLink
                         )
                     )

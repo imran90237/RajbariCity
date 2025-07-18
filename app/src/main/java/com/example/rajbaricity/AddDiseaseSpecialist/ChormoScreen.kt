@@ -34,8 +34,6 @@ data class ChormoDoctor(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    // val chamber3: String, // 🛑 Chamber ৩ Commented
     val mapLink: String
 )
 
@@ -54,8 +52,6 @@ fun ChormoScreen() {
                     workplace = "ঢাকা মেডিকেল কলেজ হাসপাতাল",
                     diseasesTreated = "থাইরয়েড, ডায়াবেটিস, হরমোনের সমস্যা",
                     chamber1 = "রাজবাগ ক্লিনিক, রুম ১০",
-                    chamber2 = "মেডিসিন হাসপাতাল, রুম ৫",
-                    // chamber3 = "সিটি হেলথ কেয়ার সেন্টার", // 🛑 Chamber ৩ Commented
                     mapLink = "https://maps.app.goo.gl/your-chormo-location"
                 )
             )
@@ -105,10 +101,8 @@ fun ChormoScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
                         Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        // Text("৩. ${doctor.chamber3}") // 🛑 Chamber ৩ Commented
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -182,10 +176,7 @@ fun AddChormoDoctorForm(onDoctorAdded: (ChormoDoctor) -> Unit, onCancel: () -> U
     var workplace by remember { mutableStateOf("") }
     var diseasesTreated by remember { mutableStateOf("") }
     var chamber1 by remember { mutableStateOf("") }
-    var chamber2 by remember { mutableStateOf("") }
-    // var chamber3 by remember { mutableStateOf("") } // 🛑 Chamber ৩ Commented
     var mapLink by remember { mutableStateOf("") }
-
     var photoUri by remember { mutableStateOf<Uri?>(null) }
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
@@ -220,8 +211,6 @@ fun AddChormoDoctorForm(onDoctorAdded: (ChormoDoctor) -> Unit, onCancel: () -> U
         OutlinedTextField(workplace, { workplace = it }, label = { Text("কর্মস্থল") })
         OutlinedTextField(diseasesTreated, { diseasesTreated = it }, label = { Text("চিকিৎসিত রোগসমূহ") })
         OutlinedTextField(chamber1, { chamber1 = it }, label = { Text("চেম্বার ১") })
-        OutlinedTextField(chamber2, { chamber2 = it }, label = { Text("চেম্বার ২") })
-        // OutlinedTextField(chamber3, { chamber3 = it }, label = { Text("চেম্বার ৩") }) // 🛑 Chamber ৩ Commented
         OutlinedTextField(mapLink, { mapLink = it }, label = { Text("Google Map লিংক") })
 
         Row(
@@ -239,20 +228,15 @@ fun AddChormoDoctorForm(onDoctorAdded: (ChormoDoctor) -> Unit, onCancel: () -> U
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = chamber2,
-                            // chamber3 = chamber3, // 🛑 Chamber ৩ Commented
                             mapLink = mapLink
                         )
                     )
-                    // Clear form fields
                     name = ""
                     specialty = ""
                     qualification = ""
                     workplace = ""
                     diseasesTreated = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = "" // 🛑 Chamber ৩ reset Commented
                     mapLink = ""
                     photoUri = null
                 }
@@ -268,8 +252,6 @@ fun AddChormoDoctorForm(onDoctorAdded: (ChormoDoctor) -> Unit, onCancel: () -> U
                     workplace = ""
                     diseasesTreated = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = "" // 🛑 Chamber ৩ reset Commented
                     mapLink = ""
                     photoUri = null
                     onCancel()

@@ -23,7 +23,7 @@ data class CourierInfo(
     val name: String,
     val address: String,
     val mapUrl: String,
-    val phone: String
+    val phone: String,
 )
 
 // Main Screen
@@ -171,7 +171,7 @@ fun CourierCard(info: CourierInfo) {
 @Composable
 fun AddCourierForm(
     onCourierAdded: (CourierInfo) -> Unit,
-    onCancel: () -> Unit
+    onCancel: () -> Unit,
 ) {
     var name by remember { mutableStateOf("") }
     var address by remember { mutableStateOf("") }

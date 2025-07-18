@@ -34,8 +34,6 @@ data class PhysicalDoctor(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    val chamber3: String,
     val mapLink: String
 )
 
@@ -54,8 +52,6 @@ fun PhysicalScreen() {
                     workplace = "ঢাকা মেডিকেল কলেজ হাসপাতাল",
                     diseasesTreated = "অস্থি ও পেশী ব্যথা, আর্থ্রাইটিস, স্পোর্টস ইনজুরি",
                     chamber1 = "রাজারবাগ ফিজিক্যাল থেরাপি ক্লিনিক",
-                    chamber2 = "ক্যাপিটাল হাসপাতাল, রুম ১০",
-                    chamber3 = "সিটি হাসপাতাল থেরাপি সেন্টার",
                     mapLink = "https://maps.app.goo.gl/your-physical-location"
                 )
             )
@@ -115,10 +111,8 @@ fun PhysicalScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
-                        Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        Text("৩. ${doctor.chamber3}")
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
+                        Text(doctor.chamber1)
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -221,13 +215,13 @@ fun AddPhysicalDoctorForm(onDoctorAdded: (PhysicalDoctor) -> Unit, onCancel: () 
             )
         }
 
-        OutlinedTextField(name, { name = it }, label = { Text("ডাক্তারের নাম") })
-        OutlinedTextField(specialty, { specialty = it }, label = { Text("বিশেষজ্ঞ বিভাগ") })
-        OutlinedTextField(qualification, { qualification = it }, label = { Text("যোগ্যতা") })
-        OutlinedTextField(workplace, { workplace = it }, label = { Text("কর্মস্থল") })
-        OutlinedTextField(diseasesTreated, { diseasesTreated = it }, label = { Text("চিকিৎসিত রোগসমূহ") })
-        OutlinedTextField(chamber1, { chamber1 = it }, label = { Text("চেম্বার") })
-        OutlinedTextField(mapLink, { mapLink = it }, label = { Text("Google Map লিংক") })
+        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("ডাক্তারের নাম") })
+        OutlinedTextField(value = specialty, onValueChange = { specialty = it }, label = { Text("বিশেষজ্ঞ বিভাগ") })
+        OutlinedTextField(value = qualification, onValueChange = { qualification = it }, label = { Text("যোগ্যতা") })
+        OutlinedTextField(value = workplace, onValueChange = { workplace = it }, label = { Text("কর্মস্থল") })
+        OutlinedTextField(value = diseasesTreated, onValueChange = { diseasesTreated = it }, label = { Text("চিকিৎসিত রোগসমূহ") })
+        OutlinedTextField(value = chamber1, onValueChange = { chamber1 = it }, label = { Text("চেম্বার") })
+        OutlinedTextField(value = mapLink, onValueChange = { mapLink = it }, label = { Text("Google Map লিংক") })
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -245,11 +239,10 @@ fun AddPhysicalDoctorForm(onDoctorAdded: (PhysicalDoctor) -> Unit, onCancel: () 
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = "",
-                            chamber3 = "",
                             mapLink = mapLink
                         )
                     )
+                    // Reset fields
                     name = ""
                     specialty = ""
                     qualification = ""
@@ -265,6 +258,7 @@ fun AddPhysicalDoctorForm(onDoctorAdded: (PhysicalDoctor) -> Unit, onCancel: () 
 
             OutlinedButton(
                 onClick = {
+                    // Reset fields
                     name = ""
                     specialty = ""
                     qualification = ""

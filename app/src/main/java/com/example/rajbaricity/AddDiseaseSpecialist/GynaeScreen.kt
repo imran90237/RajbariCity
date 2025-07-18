@@ -34,8 +34,6 @@ data class GynaeDoctor(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    val chamber3: String,
     val mapLink: String
 )
 
@@ -53,27 +51,32 @@ fun GynaeScreen() {
                     workplace = "মুগদা মেডিকেল কলেজ হাসপাতাল",
                     diseasesTreated = "প্রসূতি রোগ, বন্ধ্যাত্ব সমস্যা, প্রসবপূর্ব ও পরবর্তী সমস্যা",
                     chamber1 = "ডেল্টা মেডিকেয়ার, রাজবাড়ী শহর",
-                    chamber2 = "ল্যাবএইড ডায়াগনস্টিক সেন্টার",
-                    chamber3 = "হেলথ কেয়ার নার্সিং হোম",
                     mapLink = "https://maps.app.goo.gl/your-gynae-location"
                 )
             )
         )
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)
+    ) {
         Text(
             text = "👩‍⚕️ গাইনী ও প্রসূতি বিশেষজ্ঞ",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
         )
 
         LazyColumn(modifier = Modifier.weight(1f)) {
             items(doctors) { doctor ->
                 Card(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -81,7 +84,9 @@ fun GynaeScreen() {
                             Image(
                                 painter = painterResource(id = doctor.photoResId),
                                 contentDescription = "Doctor Photo",
-                                modifier = Modifier.size(80.dp).padding(end = 16.dp)
+                                modifier = Modifier
+                                    .size(80.dp)
+                                    .padding(end = 16.dp)
                             )
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(doctor.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
@@ -94,10 +99,8 @@ fun GynaeScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
                         Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        Text("৩. ${doctor.chamber3}")
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -133,7 +136,10 @@ fun GynaeScreen() {
                     onClick = { showForm = true },
                     modifier = Modifier
                         .size(48.dp)
-                        .background(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), shape = CircleShape)
+                        .background(
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                            shape = CircleShape
+                        )
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -176,7 +182,9 @@ fun AddGynaeDoctorForm(onDoctorAdded: (GynaeDoctor) -> Unit, onCancel: () -> Uni
     ) { uri -> photoUri = uri }
 
     Column(
-        modifier = Modifier.fillMaxWidth().padding(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Button(onClick = { imagePickerLauncher.launch("image/*") }) {
@@ -187,17 +195,19 @@ fun AddGynaeDoctorForm(onDoctorAdded: (GynaeDoctor) -> Unit, onCancel: () -> Uni
             Image(
                 painter = rememberAsyncImagePainter(it),
                 contentDescription = "Selected Doctor Image",
-                modifier = Modifier.size(100.dp).padding(4.dp)
+                modifier = Modifier
+                    .size(100.dp)
+                    .padding(4.dp)
             )
         }
 
-        OutlinedTextField(name, { name = it }, label = { Text("ডাক্তারের নাম") })
-        OutlinedTextField(specialty, { specialty = it }, label = { Text("বিশেষজ্ঞ বিভাগ") })
-        OutlinedTextField(qualification, { qualification = it }, label = { Text("যোগ্যতা") })
-        OutlinedTextField(workplace, { workplace = it }, label = { Text("কর্মস্থল") })
-        OutlinedTextField(diseasesTreated, { diseasesTreated = it }, label = { Text("চিকিৎসিত রোগসমূহ") })
-        OutlinedTextField(chamber1, { chamber1 = it }, label = { Text("চেম্বার") })
-        OutlinedTextField(mapLink, { mapLink = it }, label = { Text("Google Map লিংক") })
+        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("ডাক্তারের নাম") })
+        OutlinedTextField(value = specialty, onValueChange = { specialty = it }, label = { Text("বিশেষজ্ঞ বিভাগ") })
+        OutlinedTextField(value = qualification, onValueChange = { qualification = it }, label = { Text("যোগ্যতা") })
+        OutlinedTextField(value = workplace, onValueChange = { workplace = it }, label = { Text("কর্মস্থল") })
+        OutlinedTextField(value = diseasesTreated, onValueChange = { diseasesTreated = it }, label = { Text("চিকিৎসিত রোগসমূহ") })
+        OutlinedTextField(value = chamber1, onValueChange = { chamber1 = it }, label = { Text("চেম্বার") })
+        OutlinedTextField(value = mapLink, onValueChange = { mapLink = it }, label = { Text("Google Map লিংক") })
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -214,8 +224,6 @@ fun AddGynaeDoctorForm(onDoctorAdded: (GynaeDoctor) -> Unit, onCancel: () -> Uni
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = "",
-                            chamber3 = "",
                             mapLink = mapLink
                         )
                     )

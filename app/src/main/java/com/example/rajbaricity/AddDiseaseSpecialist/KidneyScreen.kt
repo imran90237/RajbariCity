@@ -34,8 +34,6 @@ data class KidneyDoctor(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    val chamber3: String,
     val mapLink: String
 )
 
@@ -53,8 +51,6 @@ fun KidneyScreen() {
                     workplace = "বারডেম জেনারেল হাসপাতাল",
                     diseasesTreated = "কিডনি সমস্যা, ইউরিন ইনফেকশন, স্টোন, কিডনি ফেলিউর",
                     chamber1 = "সেবা মেডিকেল, রাজবাড়ী",
-                    chamber2 = "সিটি ডায়াগনস্টিক, পাংশা",
-                    chamber3 = "রয়েল হাসপাতাল, গোয়ালন্দ",
                     mapLink = "https://maps.app.goo.gl/kidneydoctor-location"
                 )
             )
@@ -78,11 +74,20 @@ fun KidneyScreen() {
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            Image(
-                                painter = painterResource(id = doctor.photoResId),
-                                contentDescription = "Doctor Photo",
-                                modifier = Modifier.size(80.dp).padding(end = 16.dp)
-                            )
+                            if (doctor.photoUri != null) {
+                                Image(
+                                    painter = rememberAsyncImagePainter(doctor.photoUri),
+                                    contentDescription = "Doctor Photo",
+                                    modifier = Modifier.size(80.dp).padding(end = 16.dp)
+                                )
+                            } else {
+                                Image(
+                                    painter = painterResource(id = doctor.photoResId),
+                                    contentDescription = "Default Doctor Photo",
+                                    modifier = Modifier.size(80.dp).padding(end = 16.dp)
+                                )
+                            }
+
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(doctor.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                                 Text("বিশেষজ্ঞ: ${doctor.specialty}", fontSize = 14.sp)
@@ -94,10 +99,8 @@ fun KidneyScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
-                        Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        Text("৩. ${doctor.chamber3}")
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
+                        Text(doctor.chamber1)
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -212,9 +215,8 @@ fun AddKidneyDoctorForm(onDoctorAdded: (KidneyDoctor) -> Unit, onCancel: () -> U
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = "",
-                            chamber3 = "",
-                            mapLink = mapLink
+                            mapLink = mapLink,
+                            photoUri = photoUri
                         )
                     )
                     name = ""

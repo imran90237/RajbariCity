@@ -34,8 +34,6 @@ data class MedicineDoctor(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    // val chamber3: String,  // Commented out as requested
     val mapLink: String
 )
 
@@ -53,8 +51,6 @@ fun MedicineScreen() {
                     workplace = "রাজবাড়ী মেডিকেল কলেজ হাসপাতাল",
                     diseasesTreated = "ডায়াবেটিস, উচ্চ রক্তচাপ, ব্রঙ্কাইটিস, ফ্লু",
                     chamber1 = "গ্রামীণ ক্লিনিক, রাজবাড়ী",
-                    chamber2 = "সিটি ক্লিনিক, পাংশা",
-                    // chamber3 = "রয়েল হাসপাতাল, গোয়ালন্দ",  // Commented out
                     mapLink = "https://maps.app.goo.gl/medicinedoctor-location"
                 )
             )
@@ -114,10 +110,8 @@ fun MedicineScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
                         Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        // Text("৩. ${doctor.chamber3}")  // Commented out
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -190,8 +184,6 @@ fun AddMedicineDoctorForm(onDoctorAdded: (MedicineDoctor) -> Unit, onCancel: () 
     var workplace by remember { mutableStateOf("") }
     var diseasesTreated by remember { mutableStateOf("") }
     var chamber1 by remember { mutableStateOf("") }
-    var chamber2 by remember { mutableStateOf("") }
-    // var chamber3 by remember { mutableStateOf("") } // Commented out as requested
     var mapLink by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -213,7 +205,9 @@ fun AddMedicineDoctorForm(onDoctorAdded: (MedicineDoctor) -> Unit, onCancel: () 
             Image(
                 painter = rememberAsyncImagePainter(it),
                 contentDescription = "Selected Doctor Image",
-                modifier = Modifier.size(100.dp).padding(4.dp)
+                modifier = Modifier
+                    .size(100.dp)
+                    .padding(4.dp)
             )
         }
 
@@ -222,9 +216,7 @@ fun AddMedicineDoctorForm(onDoctorAdded: (MedicineDoctor) -> Unit, onCancel: () 
         OutlinedTextField(value = qualification, onValueChange = { qualification = it }, label = { Text("যোগ্যতা") })
         OutlinedTextField(value = workplace, onValueChange = { workplace = it }, label = { Text("কর্মস্থল") })
         OutlinedTextField(value = diseasesTreated, onValueChange = { diseasesTreated = it }, label = { Text("চিকিৎসিত রোগসমূহ") })
-        OutlinedTextField(value = chamber1, onValueChange = { chamber1 = it }, label = { Text("চেম্বার ১") })
-        OutlinedTextField(value = chamber2, onValueChange = { chamber2 = it }, label = { Text("চেম্বার ২") })
-        // OutlinedTextField(value = chamber3, onValueChange = { chamber3 = it }, label = { Text("চেম্বার ৩") }) // commented out
+        OutlinedTextField(value = chamber1, onValueChange = { chamber1 = it }, label = { Text("চেম্বার") })
         OutlinedTextField(value = mapLink, onValueChange = { mapLink = it }, label = { Text("Google Map লিংক") })
 
         Row(
@@ -241,21 +233,17 @@ fun AddMedicineDoctorForm(onDoctorAdded: (MedicineDoctor) -> Unit, onCancel: () 
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = chamber2,
-                            // chamber3 = chamber3,  // commented out
                             mapLink = mapLink,
                             photoUri = photoUri
                         )
                     )
-                    // Reset fields after saving
+                    // Reset fields
                     name = ""
                     specialty = ""
                     qualification = ""
                     workplace = ""
                     diseasesTreated = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = ""  // commented out
                     mapLink = ""
                     photoUri = null
                 }
@@ -264,15 +252,12 @@ fun AddMedicineDoctorForm(onDoctorAdded: (MedicineDoctor) -> Unit, onCancel: () 
             }
 
             OutlinedButton(onClick = {
-                // Reset all fields and cancel form
                 name = ""
                 specialty = ""
                 qualification = ""
                 workplace = ""
                 diseasesTreated = ""
                 chamber1 = ""
-                chamber2 = ""
-                // chamber3 = ""  // commented out
                 mapLink = ""
                 photoUri = null
                 onCancel()

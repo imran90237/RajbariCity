@@ -34,8 +34,6 @@ data class DentalDoctor(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    // val chamber3: String,
     val mapLink: String
 )
 
@@ -54,8 +52,6 @@ fun DentalScreen() {
                     workplace = "ঢাকা ডেন্টাল হাসপাতাল",
                     diseasesTreated = "দাঁতের ব্যথা, দাঁতের সার্জারি, মাড়ির সমস্যা",
                     chamber1 = "ডেন্টাল ক্লিনিক, গুলশান ১",
-                    chamber2 = "সিটি হেলথ ডেন্টাল সেন্টার",
-                    // chamber3 = "রূপগঞ্জ ক্লিনিক",
                     mapLink = "https://maps.app.goo.gl/dental-location"
                 )
             )
@@ -105,10 +101,8 @@ fun DentalScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
                         Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        // Text("৩. ${doctor.chamber3}")
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -175,17 +169,13 @@ fun DentalScreen() {
 
 @Composable
 fun AddDentalDoctorForm(onDoctorAdded: (DentalDoctor) -> Unit, onCancel: () -> Unit) {
-    val context = LocalContext.current
     var name by remember { mutableStateOf("") }
     var specialty by remember { mutableStateOf("") }
     var qualification by remember { mutableStateOf("") }
     var workplace by remember { mutableStateOf("") }
     var diseasesTreated by remember { mutableStateOf("") }
     var chamber1 by remember { mutableStateOf("") }
-    var chamber2 by remember { mutableStateOf("") }
-    // var chamber3 by remember { mutableStateOf("") }
     var mapLink by remember { mutableStateOf("") }
-
     var photoUri by remember { mutableStateOf<Uri?>(null) }
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
@@ -220,8 +210,6 @@ fun AddDentalDoctorForm(onDoctorAdded: (DentalDoctor) -> Unit, onCancel: () -> U
         OutlinedTextField(workplace, { workplace = it }, label = { Text("কর্মস্থল") })
         OutlinedTextField(diseasesTreated, { diseasesTreated = it }, label = { Text("চিকিৎসিত রোগসমূহ") })
         OutlinedTextField(chamber1, { chamber1 = it }, label = { Text("চেম্বার ১") })
-        OutlinedTextField(chamber2, { chamber2 = it }, label = { Text("চেম্বার ২") })
-        // OutlinedTextField(chamber3, { chamber3 = it }, label = { Text("চেম্বার ৩") })
         OutlinedTextField(mapLink, { mapLink = it }, label = { Text("Google Map লিংক") })
 
         Row(
@@ -239,8 +227,6 @@ fun AddDentalDoctorForm(onDoctorAdded: (DentalDoctor) -> Unit, onCancel: () -> U
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = chamber2,
-                            // chamber3 = chamber3,
                             mapLink = mapLink
                         )
                     )
@@ -251,8 +237,6 @@ fun AddDentalDoctorForm(onDoctorAdded: (DentalDoctor) -> Unit, onCancel: () -> U
                     workplace = ""
                     diseasesTreated = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = ""
                     mapLink = ""
                     photoUri = null
                 }
@@ -262,15 +246,12 @@ fun AddDentalDoctorForm(onDoctorAdded: (DentalDoctor) -> Unit, onCancel: () -> U
 
             OutlinedButton(
                 onClick = {
-                    // Clear and cancel
                     name = ""
                     specialty = ""
                     qualification = ""
                     workplace = ""
                     diseasesTreated = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = ""
                     mapLink = ""
                     photoUri = null
                     onCancel()

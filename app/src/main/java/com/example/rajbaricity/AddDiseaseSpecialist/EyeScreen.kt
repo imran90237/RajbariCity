@@ -34,8 +34,6 @@ data class EyeDoctor(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    val chamber3: String,
     val mapLink: String
 )
 
@@ -54,8 +52,6 @@ fun EyeScreen() {
                     workplace = "জাতীয় চক্ষু বিজ্ঞান ইনস্টিটিউট",
                     diseasesTreated = "চোখের ছানি, গ্লুকোমা, চোখের ইনফেকশন",
                     chamber1 = "ইসলামিয়া চক্ষু হাসপাতাল",
-                    chamber2 = "আল মানার ডায়াগনস্টিক সেন্টার",
-                    chamber3 = "রেসিডেন্স চেম্বার, রাজবাড়ী",
                     mapLink = "https://maps.app.goo.gl/your-eye-location"
                 )
             )
@@ -95,14 +91,15 @@ fun EyeScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
-                        Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        Text("৩. ${doctor.chamber3}")
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
+                        Text(doctor.chamber1)
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
                             Button(onClick = {
                                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(doctor.mapLink))
                                 context.startActivity(intent)
@@ -207,8 +204,6 @@ fun AddEyeDoctorForm(onDoctorAdded: (EyeDoctor) -> Unit, onCancel: () -> Unit) {
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = "",
-                            chamber3 = "",
                             mapLink = mapLink
                         )
                     )

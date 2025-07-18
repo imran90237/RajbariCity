@@ -27,15 +27,13 @@ import com.example.rajbaricity.R
 
 data class SurgeryDoctor(
     val photoResId: Int = R.drawable.default_doctor,
-    val photoUri: Uri? = null,  // To hold selected photo Uri if any
+    val photoUri: Uri? = null,
     val name: String,
     val specialty: String,
     val qualification: String,
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    // val chamber3: String,  // chamber3 commented out as per request
     val mapLink: String
 )
 
@@ -54,8 +52,6 @@ fun SurgeryScreen() {
                     workplace = "রাজারবাগ সাধারণ হাসপাতাল",
                     diseasesTreated = "সাধারণ সার্জারি, অপারেশন, গ্যাস্ট্রো ইত্যাদি",
                     chamber1 = "সার্জারি ওয়ার্ড, রুম ১০",
-                    chamber2 = "সিটি হাসপাতাল, OPD",
-                    // chamber3 = "সেন্ট্রাল ক্লিনিক",  // commented out
                     mapLink = "https://maps.app.goo.gl/your-surgery-location"
                 )
             )
@@ -87,7 +83,6 @@ fun SurgeryScreen() {
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row(verticalAlignment = Alignment.CenterVertically) {
-                            // Load image: use photoUri if exists, else use photoResId
                             val painter = if (doctor.photoUri != null) {
                                 rememberAsyncImagePainter(doctor.photoUri)
                             } else {
@@ -112,10 +107,8 @@ fun SurgeryScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
                         Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        // Text("৩. ${doctor.chamber3}")  // commented out as per request
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -189,8 +182,6 @@ fun AddSurgeryDoctorForm(onDoctorAdded: (SurgeryDoctor) -> Unit, onCancel: () ->
     var workplace by remember { mutableStateOf("") }
     var diseasesTreated by remember { mutableStateOf("") }
     var chamber1 by remember { mutableStateOf("") }
-    var chamber2 by remember { mutableStateOf("") }
-    // var chamber3 by remember { mutableStateOf("") }  // commented out
     var mapLink by remember { mutableStateOf("") }
 
     var photoUri by remember { mutableStateOf<Uri?>(null) }
@@ -226,9 +217,7 @@ fun AddSurgeryDoctorForm(onDoctorAdded: (SurgeryDoctor) -> Unit, onCancel: () ->
         OutlinedTextField(value = qualification, onValueChange = { qualification = it }, label = { Text("যোগ্যতা") })
         OutlinedTextField(value = workplace, onValueChange = { workplace = it }, label = { Text("কর্মস্থল") })
         OutlinedTextField(value = diseasesTreated, onValueChange = { diseasesTreated = it }, label = { Text("চিকিৎসিত রোগসমূহ") })
-        OutlinedTextField(value = chamber1, onValueChange = { chamber1 = it }, label = { Text("চেম্বার ১") })
-        OutlinedTextField(value = chamber2, onValueChange = { chamber2 = it }, label = { Text("চেম্বার ২") })
-        // OutlinedTextField(value = chamber3, onValueChange = { chamber3 = it }, label = { Text("চেম্বার ৩") }) // commented out
+        OutlinedTextField(value = chamber1, onValueChange = { chamber1 = it }, label = { Text("চেম্বার") })
         OutlinedTextField(value = mapLink, onValueChange = { mapLink = it }, label = { Text("Google Map লিংক") })
 
         Row(
@@ -247,8 +236,6 @@ fun AddSurgeryDoctorForm(onDoctorAdded: (SurgeryDoctor) -> Unit, onCancel: () ->
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = chamber2,
-                            // chamber3 = chamber3,  // commented out
                             mapLink = mapLink
                         )
                     )
@@ -259,8 +246,6 @@ fun AddSurgeryDoctorForm(onDoctorAdded: (SurgeryDoctor) -> Unit, onCancel: () ->
                     workplace = ""
                     diseasesTreated = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = ""
                     mapLink = ""
                     photoUri = null
                 }
@@ -277,8 +262,6 @@ fun AddSurgeryDoctorForm(onDoctorAdded: (SurgeryDoctor) -> Unit, onCancel: () ->
                     workplace = ""
                     diseasesTreated = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = ""
                     mapLink = ""
                     photoUri = null
                     onCancel()

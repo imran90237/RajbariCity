@@ -33,7 +33,7 @@ data class ENTDoctor(
     val qualification: String,
     val workplace: String,
     val diseasesTreated: String,
-    val chamber: String,
+    val chamber1: String,
     val mapLink: String
 )
 
@@ -51,7 +51,7 @@ fun ENTScreen() {
                     qualification = "MBBS, DLO (ENT), FCPS",
                     workplace = "রাজবাড়ী সদর হাসপাতাল",
                     diseasesTreated = "কান, নাক, গলা সমস্যা, টনসিল, হেয়ার লস, সাইনাস",
-                    chamber = "রাজবাড়ী ক্লিনিক, ২য় তলা, রুম ৭",
+                    chamber1 = "রাজবাড়ী ক্লিনিক, ২য় তলা, রুম ৭",
                     mapLink = "https://maps.app.goo.gl/rajbari-ent-clinic"
                 )
             )
@@ -102,7 +102,7 @@ fun ENTScreen() {
                         Spacer(modifier = Modifier.height(8.dp))
 
                         Text("চেম্বার:", fontWeight = FontWeight.Bold)
-                        Text(doctor.chamber)
+                        Text(doctor.chamber1)
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -175,7 +175,7 @@ fun AddENTDoctorForm(onDoctorAdded: (ENTDoctor) -> Unit, onCancel: () -> Unit) {
     var qualification by remember { mutableStateOf("") }
     var workplace by remember { mutableStateOf("") }
     var diseasesTreated by remember { mutableStateOf("") }
-    var chamber by remember { mutableStateOf("") }
+    var chamber1 by remember { mutableStateOf("") }
     var mapLink by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -210,7 +210,7 @@ fun AddENTDoctorForm(onDoctorAdded: (ENTDoctor) -> Unit, onCancel: () -> Unit) {
         OutlinedTextField(qualification, { qualification = it }, label = { Text("যোগ্যতা") })
         OutlinedTextField(workplace, { workplace = it }, label = { Text("কর্মস্থল") })
         OutlinedTextField(diseasesTreated, { diseasesTreated = it }, label = { Text("চিকিৎসিত রোগ") })
-        OutlinedTextField(chamber, { chamber = it }, label = { Text("চেম্বার") })
+        OutlinedTextField(chamber1, { chamber1 = it }, label = { Text("চেম্বার") })
         OutlinedTextField(mapLink, { mapLink = it }, label = { Text("Google Map লিংক") })
 
         Row(
@@ -227,7 +227,7 @@ fun AddENTDoctorForm(onDoctorAdded: (ENTDoctor) -> Unit, onCancel: () -> Unit) {
                             qualification = qualification,
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
-                            chamber = chamber,
+                            chamber1 = chamber1,
                             mapLink = mapLink
                         )
                     )
@@ -236,7 +236,7 @@ fun AddENTDoctorForm(onDoctorAdded: (ENTDoctor) -> Unit, onCancel: () -> Unit) {
                     qualification = ""
                     workplace = ""
                     diseasesTreated = ""
-                    chamber = ""
+                    chamber1 = ""
                     mapLink = ""
                     photoUri = null
                 }
@@ -251,7 +251,7 @@ fun AddENTDoctorForm(onDoctorAdded: (ENTDoctor) -> Unit, onCancel: () -> Unit) {
                     qualification = ""
                     workplace = ""
                     diseasesTreated = ""
-                    chamber = ""
+                    chamber1 = ""
                     mapLink = ""
                     photoUri = null
                     onCancel()

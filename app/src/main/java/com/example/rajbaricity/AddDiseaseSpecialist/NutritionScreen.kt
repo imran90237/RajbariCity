@@ -34,8 +34,6 @@ data class Nutritionist(
     val workplace: String,
     val servicesProvided: String,
     val chamber1: String,
-    val chamber2: String,
-    // val chamber3: String, // Commented out as requested
     val mapLink: String
 )
 
@@ -53,8 +51,6 @@ fun NutritionScreen() {
                     workplace = "রাজবাড়ী স্বাস্থ্য কমপ্লেক্স",
                     servicesProvided = "শিশু ও প্রাপ্তবয়স্ক পুষ্টি পরামর্শ, ওজন নিয়ন্ত্রণ, ডায়াবেটিস পুষ্টি",
                     chamber1 = "রাজবাড়ী ক্লিনিক, রাজবাড়ী",
-                    chamber2 = "স্বাস্থ্য সেন্টার, পাংশা",
-                    // chamber3 = "লাইফ কেয়ার, গোয়ালন্দ", // Commented out
                     mapLink = "https://maps.app.goo.gl/nutritionist-location"
                 )
             )
@@ -94,10 +90,8 @@ fun NutritionScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
                         Text("১. ${nutritionist.chamber1}")
-                        Text("২. ${nutritionist.chamber2}")
-                        // Text("৩. ${nutritionist.chamber3}") // Commented out
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -167,8 +161,6 @@ fun AddNutritionistForm(onNutritionistAdded: (Nutritionist) -> Unit, onCancel: (
     var workplace by remember { mutableStateOf("") }
     var servicesProvided by remember { mutableStateOf("") }
     var chamber1 by remember { mutableStateOf("") }
-    var chamber2 by remember { mutableStateOf("") }
-    // var chamber3 by remember { mutableStateOf("") } // Commented out
     var mapLink by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -198,8 +190,6 @@ fun AddNutritionistForm(onNutritionistAdded: (Nutritionist) -> Unit, onCancel: (
         OutlinedTextField(workplace, { workplace = it }, label = { Text("কর্মস্থল") })
         OutlinedTextField(servicesProvided, { servicesProvided = it }, label = { Text("পরামর্শ বিষয়") })
         OutlinedTextField(chamber1, { chamber1 = it }, label = { Text("চেম্বার ১") })
-        OutlinedTextField(chamber2, { chamber2 = it }, label = { Text("চেম্বার ২") })
-        // OutlinedTextField(chamber3, { chamber3 = it }, label = { Text("চেম্বার ৩") }) // Commented out
         OutlinedTextField(mapLink, { mapLink = it }, label = { Text("Google Map লিংক") })
 
         Row(
@@ -216,8 +206,6 @@ fun AddNutritionistForm(onNutritionistAdded: (Nutritionist) -> Unit, onCancel: (
                             workplace = workplace,
                             servicesProvided = servicesProvided,
                             chamber1 = chamber1,
-                            chamber2 = chamber2,
-                            // chamber3 = chamber3, // Commented out
                             mapLink = mapLink
                         )
                     )
@@ -228,8 +216,6 @@ fun AddNutritionistForm(onNutritionistAdded: (Nutritionist) -> Unit, onCancel: (
                     workplace = ""
                     servicesProvided = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = "" // Commented out
                     mapLink = ""
                     photoUri = null
                 }
@@ -244,8 +230,6 @@ fun AddNutritionistForm(onNutritionistAdded: (Nutritionist) -> Unit, onCancel: (
                 workplace = ""
                 servicesProvided = ""
                 chamber1 = ""
-                chamber2 = ""
-                // chamber3 = "" // Commented out
                 mapLink = ""
                 photoUri = null
                 onCancel()

@@ -34,8 +34,7 @@ data class OrthopedicDoctor(
     val workplace: String,
     val servicesProvided: String,
     val chamber1: String,
-    val chamber2: String,
-    // val chamber3: String, // commented out as requested
+    // val chamber2: String, // Deleted as requested
     val mapLink: String
 )
 
@@ -53,8 +52,6 @@ fun OrthopedicScreen() {
                     workplace = "রাজবাড়ী জেলা হাসপাতাল",
                     servicesProvided = "হাড়, সন্ধি ও পেশী সমস্যা চিকিৎসা, অস্ত্রোপচার",
                     chamber1 = "অর্থো ক্লিনিক, রাজবাড়ী",
-                    chamber2 = "হেলথ সেন্টার, গোয়ালন্দ",
-                    // chamber3 = "মেডিকেয়ার, পাংশা", // commented out
                     mapLink = "https://maps.app.goo.gl/orthopedic-location"
                 )
             )
@@ -104,10 +101,8 @@ fun OrthopedicScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
                         Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        // Text("৩. ${doctor.chamber3}") // commented out
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -180,8 +175,7 @@ fun AddOrthopedicDoctorForm(onDoctorAdded: (OrthopedicDoctor) -> Unit, onCancel:
     var workplace by remember { mutableStateOf("") }
     var servicesProvided by remember { mutableStateOf("") }
     var chamber1 by remember { mutableStateOf("") }
-    var chamber2 by remember { mutableStateOf("") }
-    // var chamber3 by remember { mutableStateOf("") } // commented out
+    // var chamber2 by remember { mutableStateOf("") } // Deleted as requested
     var mapLink by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -214,9 +208,7 @@ fun AddOrthopedicDoctorForm(onDoctorAdded: (OrthopedicDoctor) -> Unit, onCancel:
         OutlinedTextField(value = qualification, onValueChange = { qualification = it }, label = { Text("যোগ্যতা") })
         OutlinedTextField(value = workplace, onValueChange = { workplace = it }, label = { Text("কর্মস্থল") })
         OutlinedTextField(value = servicesProvided, onValueChange = { servicesProvided = it }, label = { Text("পরিষেবা") })
-        OutlinedTextField(value = chamber1, onValueChange = { chamber1 = it }, label = { Text("চেম্বার ১") })
-        OutlinedTextField(value = chamber2, onValueChange = { chamber2 = it }, label = { Text("চেম্বার ২") })
-        // OutlinedTextField(value = chamber3, onValueChange = { chamber3 = it }, label = { Text("চেম্বার ৩") }) // commented out
+        OutlinedTextField(value = chamber1, onValueChange = { chamber1 = it }, label = { Text("চেম্বার") })
         OutlinedTextField(value = mapLink, onValueChange = { mapLink = it }, label = { Text("Google Map লিংক") })
 
         Row(
@@ -233,20 +225,15 @@ fun AddOrthopedicDoctorForm(onDoctorAdded: (OrthopedicDoctor) -> Unit, onCancel:
                             workplace = workplace,
                             servicesProvided = servicesProvided,
                             chamber1 = chamber1,
-                            chamber2 = chamber2,
-                            // chamber3 = chamber3, // commented out
                             mapLink = mapLink
                         )
                     )
-                    // Reset form fields
                     name = ""
                     specialty = ""
                     qualification = ""
                     workplace = ""
                     servicesProvided = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = ""
                     mapLink = ""
                     photoUri = null
                 }
@@ -261,8 +248,6 @@ fun AddOrthopedicDoctorForm(onDoctorAdded: (OrthopedicDoctor) -> Unit, onCancel:
                 workplace = ""
                 servicesProvided = ""
                 chamber1 = ""
-                chamber2 = ""
-                // chamber3 = ""
                 mapLink = ""
                 photoUri = null
                 onCancel()

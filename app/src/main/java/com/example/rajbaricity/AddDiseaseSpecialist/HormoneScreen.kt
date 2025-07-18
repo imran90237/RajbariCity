@@ -34,8 +34,6 @@ data class HormoneDoctor(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    val chamber3: String,
     val mapLink: String
 )
 
@@ -53,8 +51,6 @@ fun HormoneScreen() {
                     workplace = "বারডেম হাসপাতাল",
                     diseasesTreated = "ডায়াবেটিস, থাইরয়েড, হরমোন সমস্যা, ওজন নিয়ন্ত্রণ",
                     chamber1 = "রাজবাড়ী মেডিকেল সেন্টার",
-                    chamber2 = "সেবা হাসপাতাল",
-                    chamber3 = "ডায়াবেটিক কেয়ার রাজবাড়ী",
                     mapLink = "https://maps.app.goo.gl/hormone-location"
                 )
             )
@@ -94,10 +90,8 @@ fun HormoneScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
                         Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        Text("৩. ${doctor.chamber3}")
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -212,8 +206,6 @@ fun AddHormoneDoctorForm(onDoctorAdded: (HormoneDoctor) -> Unit, onCancel: () ->
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = "",
-                            chamber3 = "",
                             mapLink = mapLink
                         )
                     )

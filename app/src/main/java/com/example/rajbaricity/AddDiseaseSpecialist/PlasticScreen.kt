@@ -34,8 +34,6 @@ data class PlasticDoctor(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    val chamber3: String,
     val mapLink: String
 )
 
@@ -54,8 +52,6 @@ fun PlasticScreen() {
                     workplace = "রাজারবাগ সাধারণ হাসপাতাল",
                     diseasesTreated = "প্লাস্টিক সার্জারি, বার্ন, পুনর্বাসন",
                     chamber1 = "প্লাস্টিক সার্জারি ক্লিনিক, রুম ৫",
-                    chamber2 = "সিটি হাসপাতাল, OPD",
-                    chamber3 = "নিউ লাইফ হাসপাতাল",
                     mapLink = "https://maps.app.goo.gl/your-plastic-location"
                 )
             )
@@ -105,10 +101,8 @@ fun PlasticScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
                         Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        Text("৩. ${doctor.chamber3}")
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -235,8 +229,6 @@ fun AddPlasticDoctorForm(onDoctorAdded: (PlasticDoctor) -> Unit, onCancel: () ->
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = "",
-                            chamber3 = "",
                             mapLink = mapLink
                         )
                     )

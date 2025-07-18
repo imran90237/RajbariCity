@@ -34,8 +34,7 @@ data class ChildDoctor(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String = "",
-    // val chamber3: String = "", // Chamber ৩ কমেন্ট করে রাখা হলো
+    // val chamber3: String = "", // Optional chamber
     val mapLink: String
 )
 
@@ -54,8 +53,6 @@ fun ChildScreen() {
                     workplace = "রাজারবাগ শিশু হাসপাতাল",
                     diseasesTreated = "শিশু জ্বর, হাঁপানি, ডায়রিয়া",
                     chamber1 = "রাজারবাগ শিশু ক্লিনিক",
-                    chamber2 = "সিটি হাসপাতাল, রুম ১০",
-                    // chamber3 = "গ্রিন হেলথ কেয়ার", // Optional field কমেন্ট করে রাখা
                     mapLink = "https://maps.app.goo.gl/child-doctor-location"
                 )
             )
@@ -115,10 +112,8 @@ fun ChildScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
                         Text("১. ${doctor.chamber1}")
-                        if (doctor.chamber2.isNotBlank()) Text("২. ${doctor.chamber2}")
-                        // if (doctor.chamber3.isNotBlank()) Text("৩. ${doctor.chamber3}") // কমেন্ট করা হয়েছে
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -190,8 +185,7 @@ fun AddChildDoctorForm(onDoctorAdded: (ChildDoctor) -> Unit, onCancel: () -> Uni
     var workplace by remember { mutableStateOf("") }
     var diseasesTreated by remember { mutableStateOf("") }
     var chamber1 by remember { mutableStateOf("") }
-    var chamber2 by remember { mutableStateOf("") }
-    // var chamber3 by remember { mutableStateOf("") } // Optional চেম্বার ৩
+    // var chamber3 by remember { mutableStateOf("") } // Optional
     var mapLink by remember { mutableStateOf("") }
     var photoUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -226,9 +220,8 @@ fun AddChildDoctorForm(onDoctorAdded: (ChildDoctor) -> Unit, onCancel: () -> Uni
         OutlinedTextField(qualification, { qualification = it }, label = { Text("যোগ্যতা") })
         OutlinedTextField(workplace, { workplace = it }, label = { Text("কর্মস্থল") })
         OutlinedTextField(diseasesTreated, { diseasesTreated = it }, label = { Text("চিকিৎসিত রোগসমূহ") })
-        OutlinedTextField(chamber1, { chamber1 = it }, label = { Text("চেম্বার ১") })
-        OutlinedTextField(chamber2, { chamber2 = it }, label = { Text("চেম্বার ২") })
-        // OutlinedTextField(chamber3, { chamber3 = it }, label = { Text("চেম্বার ৩") }) // Optional input
+        OutlinedTextField(chamber1, { chamber1 = it }, label = { Text("চেম্বার") })
+        // OutlinedTextField(chamber3, { chamber3 = it }, label = { Text("চেম্বার ৩") }) // Optional
 
         OutlinedTextField(mapLink, { mapLink = it }, label = { Text("Google Map লিংক") })
 
@@ -248,8 +241,6 @@ fun AddChildDoctorForm(onDoctorAdded: (ChildDoctor) -> Unit, onCancel: () -> Uni
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = chamber2,
-                            // chamber3 = chamber3, // Optional ফিল্ড
                             mapLink = mapLink
                         )
                     )
@@ -259,8 +250,6 @@ fun AddChildDoctorForm(onDoctorAdded: (ChildDoctor) -> Unit, onCancel: () -> Uni
                     workplace = ""
                     diseasesTreated = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = ""
                     mapLink = ""
                     photoUri = null
                 }
@@ -276,8 +265,6 @@ fun AddChildDoctorForm(onDoctorAdded: (ChildDoctor) -> Unit, onCancel: () -> Uni
                     workplace = ""
                     diseasesTreated = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = ""
                     mapLink = ""
                     photoUri = null
                     onCancel()

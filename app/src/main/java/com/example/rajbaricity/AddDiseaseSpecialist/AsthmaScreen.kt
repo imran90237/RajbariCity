@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.sp
 import coil.compose.rememberAsyncImagePainter
 import com.example.rajbaricity.R
 
-// ✅ Only 2 chambers now
 data class AsthmaSpecialist(
     val photoResId: Int = R.drawable.default_doctor,
     val photoUri: Uri? = null,
@@ -35,8 +34,6 @@ data class AsthmaSpecialist(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    // val chamber3: String, // 🔒 Commented as per your request
     val mapLink: String
 )
 
@@ -55,8 +52,6 @@ fun AsthmaScreen() {
                     workplace = "ঢাকা ফুসফুস ইনস্টিটিউট",
                     diseasesTreated = "অ্যাজমা, ব্রংকাইটিস, শ্বাসকষ্ট",
                     chamber1 = "বেলা ১০-২ টা, ফুসফুস বিভাগ, হাসপাতাল",
-                    chamber2 = "সিটি ক্লিনিক, ধানমন্ডি",
-                    // chamber3 = "রাজধানী হাসপাতাল", // 🔒 Removed
                     mapLink = "https://maps.app.goo.gl/your-asthma-location"
                 )
             )
@@ -106,10 +101,8 @@ fun AsthmaScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
-                        Text("১. ${specialist.chamber1}")
-                        Text("২. ${specialist.chamber2}")
-                        // Text("৩. ${specialist.chamber3}") // 🔒 Commented out
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
+                        Text("• ${specialist.chamber1}")
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -183,8 +176,6 @@ fun AddAsthmaSpecialistForm(onSpecialistAdded: (AsthmaSpecialist) -> Unit, onCan
     var workplace by remember { mutableStateOf("") }
     var diseasesTreated by remember { mutableStateOf("") }
     var chamber1 by remember { mutableStateOf("") }
-    var chamber2 by remember { mutableStateOf("") }
-    // var chamber3 by remember { mutableStateOf("") } // 🔒 Removed
     var mapLink by remember { mutableStateOf("") }
 
     var photoUri by remember { mutableStateOf<Uri?>(null) }
@@ -220,9 +211,7 @@ fun AddAsthmaSpecialistForm(onSpecialistAdded: (AsthmaSpecialist) -> Unit, onCan
         OutlinedTextField(qualification, { qualification = it }, label = { Text("যোগ্যতা") })
         OutlinedTextField(workplace, { workplace = it }, label = { Text("কর্মস্থল") })
         OutlinedTextField(diseasesTreated, { diseasesTreated = it }, label = { Text("চিকিৎসিত রোগসমূহ") })
-        OutlinedTextField(chamber1, { chamber1 = it }, label = { Text("চেম্বার ১") })
-        OutlinedTextField(chamber2, { chamber2 = it }, label = { Text("চেম্বার ২") })
-        // OutlinedTextField(chamber3, { chamber3 = it }, label = { Text("চেম্বার ৩") }) // 🔒 Commented out
+        OutlinedTextField(chamber1, { chamber1 = it }, label = { Text("চেম্বার") })
         OutlinedTextField(mapLink, { mapLink = it }, label = { Text("Google Map লিংক") })
 
         Row(
@@ -240,20 +229,15 @@ fun AddAsthmaSpecialistForm(onSpecialistAdded: (AsthmaSpecialist) -> Unit, onCan
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = chamber2,
-                            // chamber3 = chamber3, // 🔒 Removed
                             mapLink = mapLink
                         )
                     )
-                    // Clear fields
                     name = ""
                     specialty = ""
                     qualification = ""
                     workplace = ""
                     diseasesTreated = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = ""
                     mapLink = ""
                     photoUri = null
                 }
@@ -269,8 +253,6 @@ fun AddAsthmaSpecialistForm(onSpecialistAdded: (AsthmaSpecialist) -> Unit, onCan
                     workplace = ""
                     diseasesTreated = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = ""
                     mapLink = ""
                     photoUri = null
                     onCancel()

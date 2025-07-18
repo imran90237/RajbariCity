@@ -34,8 +34,6 @@ data class HridrogDoctor(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    val chamber3: String,
     val mapLink: String
 )
 
@@ -53,27 +51,32 @@ fun HridrogScreen() {
                     workplace = "জাতীয় হৃদরোগ ইনস্টিটিউট",
                     diseasesTreated = "উচ্চ রক্তচাপ, হৃদরোগ, হার্ট অ্যাটাক, কার্ডিয়াক সমস্যাসমূহ",
                     chamber1 = "লাইফ কেয়ার, রাজবাড়ী",
-                    chamber2 = "সিটি হসপিটাল, গোয়ালন্দ",
-                    chamber3 = "সেবা কার্ডিয়াক কেয়ার, পাংশা",
                     mapLink = "https://maps.app.goo.gl/hridrog-location"
                 )
             )
         )
     }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)
+    ) {
         Text(
             text = "❤️ হার্ট রোগ বিশেষজ্ঞ",
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp)
         )
 
         LazyColumn(modifier = Modifier.weight(1f)) {
             items(doctors) { doctor ->
                 Card(
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
@@ -81,7 +84,9 @@ fun HridrogScreen() {
                             Image(
                                 painter = painterResource(id = doctor.photoResId),
                                 contentDescription = "Doctor Photo",
-                                modifier = Modifier.size(80.dp).padding(end = 16.dp)
+                                modifier = Modifier
+                                    .size(80.dp)
+                                    .padding(end = 16.dp)
                             )
                             Column(modifier = Modifier.weight(1f)) {
                                 Text(doctor.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
@@ -94,10 +99,8 @@ fun HridrogScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
                         Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        Text("৩. ${doctor.chamber3}")
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -111,7 +114,6 @@ fun HridrogScreen() {
                             }) {
                                 Text("📍 লোকেশন")
                             }
-
                             Button(onClick = {
                                 val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:01700000000"))
                                 context.startActivity(intent)
@@ -133,7 +135,10 @@ fun HridrogScreen() {
                     onClick = { showForm = true },
                     modifier = Modifier
                         .size(48.dp)
-                        .background(color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f), shape = CircleShape)
+                        .background(
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                            shape = CircleShape
+                        )
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
@@ -151,9 +156,7 @@ fun HridrogScreen() {
                     doctors.add(it)
                     showForm = false
                 },
-                onCancel = {
-                    showForm = false
-                }
+                onCancel = { showForm = false }
             )
         }
     }
@@ -161,6 +164,7 @@ fun HridrogScreen() {
 
 @Composable
 fun AddHridrogDoctorForm(onDoctorAdded: (HridrogDoctor) -> Unit, onCancel: () -> Unit) {
+    val context = LocalContext.current
     var name by remember { mutableStateOf("") }
     var specialty by remember { mutableStateOf("") }
     var qualification by remember { mutableStateOf("") }
@@ -175,28 +179,31 @@ fun AddHridrogDoctorForm(onDoctorAdded: (HridrogDoctor) -> Unit, onCancel: () ->
     ) { uri -> photoUri = uri }
 
     Column(
-        modifier = Modifier.fillMaxWidth().padding(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Button(onClick = { imagePickerLauncher.launch("image/*") }) {
             Text("📷 ছবি নির্বাচন করুন")
         }
-
         photoUri?.let {
             Image(
                 painter = rememberAsyncImagePainter(it),
                 contentDescription = "Selected Doctor Image",
-                modifier = Modifier.size(100.dp).padding(4.dp)
+                modifier = Modifier
+                    .size(100.dp)
+                    .padding(4.dp)
             )
         }
 
-        OutlinedTextField(name, { name = it }, label = { Text("ডাক্তারের নাম") })
-        OutlinedTextField(specialty, { specialty = it }, label = { Text("বিশেষজ্ঞ বিভাগ") })
-        OutlinedTextField(qualification, { qualification = it }, label = { Text("যোগ্যতা") })
-        OutlinedTextField(workplace, { workplace = it }, label = { Text("কর্মস্থল") })
-        OutlinedTextField(diseasesTreated, { diseasesTreated = it }, label = { Text("চিকিৎসিত রোগসমূহ") })
-        OutlinedTextField(chamber1, { chamber1 = it }, label = { Text("চেম্বার") })
-        OutlinedTextField(mapLink, { mapLink = it }, label = { Text("Google Map লিংক") })
+        OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("ডাক্তারের নাম") })
+        OutlinedTextField(value = specialty, onValueChange = { specialty = it }, label = { Text("বিশেষজ্ঞ বিভাগ") })
+        OutlinedTextField(value = qualification, onValueChange = { qualification = it }, label = { Text("যোগ্যতা") })
+        OutlinedTextField(value = workplace, onValueChange = { workplace = it }, label = { Text("কর্মস্থল") })
+        OutlinedTextField(value = diseasesTreated, onValueChange = { diseasesTreated = it }, label = { Text("চিকিৎসিত রোগসমূহ") })
+        OutlinedTextField(value = chamber1, onValueChange = { chamber1 = it }, label = { Text("চেম্বার") })
+        OutlinedTextField(value = mapLink, onValueChange = { mapLink = it }, label = { Text("Google Map লিংক") })
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -212,11 +219,10 @@ fun AddHridrogDoctorForm(onDoctorAdded: (HridrogDoctor) -> Unit, onCancel: () ->
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = "",
-                            chamber3 = "",
                             mapLink = mapLink
                         )
                     )
+                    // reset form
                     name = ""
                     specialty = ""
                     qualification = ""
@@ -229,8 +235,8 @@ fun AddHridrogDoctorForm(onDoctorAdded: (HridrogDoctor) -> Unit, onCancel: () ->
             }) {
                 Text("✅ Save Doctor Info")
             }
-
             OutlinedButton(onClick = {
+                // cancel & reset
                 name = ""
                 specialty = ""
                 qualification = ""

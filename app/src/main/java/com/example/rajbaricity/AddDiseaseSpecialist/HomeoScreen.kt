@@ -34,8 +34,6 @@ data class HomeoDoctor(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    val chamber3: String,
     val mapLink: String
 )
 
@@ -53,8 +51,6 @@ fun HomeoScreen() {
                     workplace = "রাজবাড়ী হোমিও সেন্টার",
                     diseasesTreated = "চর্মরোগ, এলার্জি, হরমোন সমস্যা, গ্যাস্ট্রিক, মাথাব্যথা",
                     chamber1 = "হোমিও কেয়ার, রাজবাড়ী শহর",
-                    chamber2 = "আল রাজা মেডিকো",
-                    chamber3 = "রাজবাড়ী হেলথ কেয়ার",
                     mapLink = "https://maps.app.goo.gl/homeo-location"
                 )
             )
@@ -94,10 +90,8 @@ fun HomeoScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
-                        Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        Text("৩. ${doctor.chamber3}")
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
+                        Text(doctor.chamber1)
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -212,8 +206,6 @@ fun AddHomeoDoctorForm(onDoctorAdded: (HomeoDoctor) -> Unit, onCancel: () -> Uni
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = "",
-                            chamber3 = "",
                             mapLink = mapLink
                         )
                     )

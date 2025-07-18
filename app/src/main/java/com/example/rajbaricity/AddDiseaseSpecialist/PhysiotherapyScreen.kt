@@ -34,8 +34,6 @@ data class PhysiotherapyDoctor(
     val workplace: String,
     val diseasesTreated: String,
     val chamber1: String,
-    val chamber2: String,
-    // val chamber3: String,  // commented out as requested
     val mapLink: String
 )
 
@@ -54,8 +52,6 @@ fun PhysiotherapyScreen() {
                     workplace = "রাজবাড়ী ফিজিওথেরাপি সেন্টার",
                     diseasesTreated = "মাংসপেশী ব্যথা, স্পোর্টস ইনজুরি, প্যারালাইসিস",
                     chamber1 = "রাজবাড়ী মেডিকেল কলেজ",
-                    chamber2 = "সিটি ক্লিনিক, রুম ১০",
-                    // chamber3 = "হেলথ কেয়ার ফিজিওথেরাপি",  // commented out
                     mapLink = "https://maps.app.goo.gl/your-physiotherapy-location"
                 )
             )
@@ -105,10 +101,8 @@ fun PhysiotherapyScreen() {
 
                         Spacer(modifier = Modifier.height(8.dp))
 
-                        Text("চেম্বার সমূহ:", fontWeight = FontWeight.Bold)
+                        Text("চেম্বার:", fontWeight = FontWeight.Bold)
                         Text("১. ${doctor.chamber1}")
-                        Text("২. ${doctor.chamber2}")
-                        // Text("৩. ${doctor.chamber3}")  // commented out
 
                         Spacer(modifier = Modifier.height(8.dp))
 
@@ -182,8 +176,6 @@ fun AddPhysiotherapyDoctorForm(onDoctorAdded: (PhysiotherapyDoctor) -> Unit, onC
     var workplace by remember { mutableStateOf("") }
     var diseasesTreated by remember { mutableStateOf("") }
     var chamber1 by remember { mutableStateOf("") }
-    var chamber2 by remember { mutableStateOf("") }
-    // var chamber3 by remember { mutableStateOf("") }  // commented out
     var mapLink by remember { mutableStateOf("") }
 
     var photoUri by remember { mutableStateOf<Uri?>(null) }
@@ -219,9 +211,7 @@ fun AddPhysiotherapyDoctorForm(onDoctorAdded: (PhysiotherapyDoctor) -> Unit, onC
         OutlinedTextField(qualification, { qualification = it }, label = { Text("যোগ্যতা") })
         OutlinedTextField(workplace, { workplace = it }, label = { Text("কর্মস্থল") })
         OutlinedTextField(diseasesTreated, { diseasesTreated = it }, label = { Text("চিকিৎসিত রোগসমূহ") })
-        OutlinedTextField(chamber1, { chamber1 = it }, label = { Text("চেম্বার ১") })
-        OutlinedTextField(chamber2, { chamber2 = it }, label = { Text("চেম্বার ২") })
-        // OutlinedTextField(chamber3, { chamber3 = it }, label = { Text("চেম্বার ৩") })  // commented out
+        OutlinedTextField(chamber1, { chamber1 = it }, label = { Text("চেম্বার") })
         OutlinedTextField(mapLink, { mapLink = it }, label = { Text("Google Map লিংক") })
 
         Row(
@@ -239,8 +229,6 @@ fun AddPhysiotherapyDoctorForm(onDoctorAdded: (PhysiotherapyDoctor) -> Unit, onC
                             workplace = workplace,
                             diseasesTreated = diseasesTreated,
                             chamber1 = chamber1,
-                            chamber2 = chamber2,
-                            // chamber3 = chamber3,  // commented out
                             mapLink = mapLink
                         )
                     )
@@ -250,8 +238,6 @@ fun AddPhysiotherapyDoctorForm(onDoctorAdded: (PhysiotherapyDoctor) -> Unit, onC
                     workplace = ""
                     diseasesTreated = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = ""  // commented out
                     mapLink = ""
                     photoUri = null
                 }
@@ -267,8 +253,6 @@ fun AddPhysiotherapyDoctorForm(onDoctorAdded: (PhysiotherapyDoctor) -> Unit, onC
                     workplace = ""
                     diseasesTreated = ""
                     chamber1 = ""
-                    chamber2 = ""
-                    // chamber3 = ""  // commented out
                     mapLink = ""
                     photoUri = null
                     onCancel()
