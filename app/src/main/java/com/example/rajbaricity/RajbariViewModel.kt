@@ -9,10 +9,11 @@ import com.example.rajbaricity.model.Section
 class RajbariViewModel : ViewModel() {
 
     data class User(
-        val name: String,
-        val emailOrPhone: String,
+        val username: String,
+        val email: String,
+        val phone: String,
         val password: String,
-        val profileImageUri: String
+        val profileImageUri: String // Store as String
     )
 
     private val users = mutableStateListOf<User>()
@@ -20,39 +21,61 @@ class RajbariViewModel : ViewModel() {
     var loggedInUser by mutableStateOf<User?>(null)
         private set
 
-    // নতুন প্রপার্টি
     val isRegistered: Boolean
         get() = users.isNotEmpty()
 
     val loggedInUserName: String?
-        get() = loggedInUser?.name
+        get() = loggedInUser?.username
 
     val loggedInUserEmail: String?
-        get() = loggedInUser?.emailOrPhone
+        get() = loggedInUser?.email
+
+    val loggedInUserPhone: String?
+        get() = loggedInUser?.phone
 
     val loggedInUserImage: String?
         get() = loggedInUser?.profileImageUri
 
+    val loggedInUserImageUri: Uri?
+        get() = loggedInUser?.profileImageUri?.let { Uri.parse(it) }
+
+    // Register user with either email or phone
     fun registerUser(
-        name: String,
+        username: String,
         emailOrPhone: String,
         password: String,
         imageUri: Uri?
     ): Boolean {
-        if (!isValidEmail(emailOrPhone) && !isValidPhone(emailOrPhone)) {
-            return false
+        val email: String
+        val phone: String
+
+        if (isValidEmail(emailOrPhone)) {
+            email = emailOrPhone
+            phone = ""
+        } else if (isValidPhone(emailOrPhone)) {
+            phone = emailOrPhone
+            email = ""
+        } else {
+            return false // Invalid input
         }
-        if (users.any { it.emailOrPhone == emailOrPhone }) {
-            return false
-        }
-        val finalImageUri = imageUri?.toString() ?: "man"
-        val newUser = User(name, emailOrPhone, password, finalImageUri)
+
+        if (users.any {
+                it.username == username || it.email == email || it.phone == phone
+            }) return false // Already exists
+
+        val finalImageUri = imageUri?.toString() ?: "man" // default image if null
+        val newUser = User(username, email, phone, password, finalImageUri)
         users.add(newUser)
         return true
     }
 
-    fun login(emailOrPhone: String, password: String): Boolean {
-        val matchedUser = users.find { it.emailOrPhone == emailOrPhone && it.password == password }
+    // Login with username or email or phone
+    fun login(input: String, password: String): Boolean {
+        val matchedUser = users.find { user ->
+            (user.username == input || user.email == input || user.phone == input) &&
+                    user.password == password
+        }
+
         return if (matchedUser != null) {
             loggedInUser = matchedUser
             true
@@ -65,15 +88,13 @@ class RajbariViewModel : ViewModel() {
         loggedInUser = null
     }
 
-    fun updateUserProfile(newName: String, newEmail: String) {
+    fun updateUserProfile(newUsername: String, newEmail: String, newPhone: String) {
         loggedInUser = loggedInUser?.copy(
-            name = newName,
-            emailOrPhone = newEmail
+            username = newUsername,
+            email = newEmail,
+            phone = newPhone
         )
     }
-
-
-
 
     private fun isValidEmail(input: String): Boolean =
         Patterns.EMAIL_ADDRESS.matcher(input).matches()

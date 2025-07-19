@@ -47,10 +47,9 @@ fun LoginScreen(
             // Profile Image
             val profilePainter = when {
                 loggedInUser?.profileImageUri?.isNotBlank() == true &&
-                        loggedInUser?.profileImageUri != "default_avatar" ->
+                        loggedInUser?.profileImageUri != "man" ->
                     rememberAsyncImagePainter(loggedInUser?.profileImageUri)
-
-                else -> painterResource(id = R.drawable.logo)
+                else -> painterResource(id = R.drawable.man)
             }
 
             Image(
@@ -65,12 +64,12 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "স্বাগতম, ${loggedInUser?.name ?: "ব্যবহারকারী"}!",
+                text = "স্বাগতম, ${loggedInUser?.username ?: "ব্যবহারকারী"}!",
                 style = MaterialTheme.typography.headlineSmall
             )
 
             Text(
-                text = loggedInUser?.emailOrPhone ?: "example@email.com",
+                text = loggedInUser?.email ?: "example@email.com",
                 style = MaterialTheme.typography.bodyMedium,
                 color = Color.Gray
             )
@@ -80,7 +79,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
-                label = { Text("ইউজারনেম বা ফোন নম্বর") },
+                label = { Text("ইউজারনেম / ইমেইল / ফোন") },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -97,7 +96,7 @@ fun LoginScreen(
             if (loginFailed) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "ইউজারনেম বা পাসওয়ার্ড ভুল হয়েছে",
+                    text = "ইউজারনেম, ইমেইল বা পাসওয়ার্ড ভুল হয়েছে",
                     color = Color.Red
                 )
             }
