@@ -14,6 +14,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             RajbariCityTheme {
+
                 val navController = rememberNavController()
                 val viewModel: RajbariViewModel = viewModel()
 

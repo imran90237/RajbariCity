@@ -8,14 +8,15 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -28,7 +29,7 @@ fun RegistrationScreen(navController: NavController, viewModel: RajbariViewModel
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    var name by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
     var emailOrPhone by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var profileImageUri by remember { mutableStateOf<Uri?>(null) }
@@ -52,12 +53,11 @@ fun RegistrationScreen(navController: NavController, viewModel: RajbariViewModel
             Text("রেজিস্ট্রেশন করুন", style = MaterialTheme.typography.headlineSmall)
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Image picker
             Image(
                 painter = if (profileImageUri != null)
                     rememberAsyncImagePainter(profileImageUri)
                 else
-                    painterResource(id = R.drawable.man), // ✅ default photo
+                    painterResource(id = R.drawable.man), // ✅ default profile image
                 contentDescription = "Profile Image",
                 modifier = Modifier
                     .size(100.dp)
@@ -71,16 +71,17 @@ fun RegistrationScreen(navController: NavController, viewModel: RajbariViewModel
             Spacer(modifier = Modifier.height(12.dp))
 
             OutlinedTextField(
-                value = name,
-                onValueChange = { name = it },
-                label = { Text("নাম") },
+                value = username,
+                onValueChange = { username = it },
+                label = { Text("ইউজারনেম") },
                 modifier = Modifier.fillMaxWidth()
             )
 
             OutlinedTextField(
                 value = emailOrPhone,
                 onValueChange = { emailOrPhone = it },
-                label = { Text("ইমেইল বা মোবাইল নম্বর") },
+                label = { Text("ইমেইল / মোবাইল নম্বর") },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -88,21 +89,21 @@ fun RegistrationScreen(navController: NavController, viewModel: RajbariViewModel
                 value = password,
                 onValueChange = { password = it },
                 label = { Text("পাসওয়ার্ড") },
-                modifier = Modifier.fillMaxWidth(),
-                visualTransformation = PasswordVisualTransformation()
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier.fillMaxWidth()
             )
 
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = {
-                    if (name.isBlank() || emailOrPhone.isBlank() || password.isBlank()) {
+                    if (username.isBlank() || emailOrPhone.isBlank() || password.isBlank()) {
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar("সব ফিল্ড পূরণ করুন")
                         }
-                    } else if (!viewModel.registerUser(name, emailOrPhone, password, profileImageUri)) {
+                    } else if (!viewModel.registerUser(username, emailOrPhone, password, profileImageUri)) {
                         coroutineScope.launch {
-                            snackbarHostState.showSnackbar("ইমেইল বা মোবাইল সঠিক নয় অথবা আগে রেজিস্টার করা হয়েছে")
+                            snackbarHostState.showSnackbar("ইমেইল / মোবাইল ইতিমধ্যে ব্যবহৃত হয়েছে বা সঠিক নয়")
                         }
                     } else {
                         navController.navigate("login") {
