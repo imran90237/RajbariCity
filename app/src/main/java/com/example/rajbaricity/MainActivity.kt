@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import com.example.rajbaricity.Navigation.AppNavGraph
+import com.example.rajbaricity.ui.RajbariViewModel
 import com.example.rajbaricity.ui.theme.RajbariCityTheme
 
 class MainActivity : ComponentActivity() {

@@ -1,8 +1,4 @@
 package com.example.rajbaricity
-
-import LocalMarketScreen
-import NearbyMosqueScreen
-import android.app.Notification
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -13,6 +9,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.rajbaricity.AddDiseaseSpecialist.*
 import com.example.rajbaricity.AddEducation.*
+import com.example.rajbaricity.ui.RajbariViewModel
 
 @Composable
 fun DetailsScreen(
@@ -116,8 +113,8 @@ fun HomeContent(
                 "courier" -> CourierServiceScreen()
                 "lost_found" -> LostAndFoundScreen()
                 "jobs_training" -> JobsTrainingScreen()
-                "local_market" -> LocalMarketScreen()
-                "business_agriculture" -> BusinessAgricultureScreen()
+                "Shopping" -> ShoppingScreen()
+                "Nursery" -> NurseryScreen()
                 "mistry" -> MistryScreen()
 
                 // Disease specialist screens

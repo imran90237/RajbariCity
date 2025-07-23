@@ -1,20 +1,16 @@
-package com.example.rajbaricity
+package com.example.rajbaricity.ui
 
 import android.net.Uri
-import android.util.Patterns
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.rajbaricity.model.Section
+import com.example.rajbaricity.model.User
+import com.example.rajbaricity.network.RetrofitClient
+import com.example.rajbaricity.utils.ValidationUtils
+import kotlinx.coroutines.launch
 
 class RajbariViewModel : ViewModel() {
-
-    data class User(
-        val username: String,
-        val email: String,
-        val phone: String,
-        val password: String,
-        val profileImageUri: String // Store as String
-    )
 
     private val users = mutableStateListOf<User>()
 
@@ -39,7 +35,7 @@ class RajbariViewModel : ViewModel() {
     val loggedInUserImageUri: Uri?
         get() = loggedInUser?.profileImageUri?.let { Uri.parse(it) }
 
-    // Register user with either email or phone
+    // Local register
     fun registerUser(
         username: String,
         emailOrPhone: String,
@@ -49,27 +45,43 @@ class RajbariViewModel : ViewModel() {
         val email: String
         val phone: String
 
-        if (isValidEmail(emailOrPhone)) {
+        if (ValidationUtils.isValidEmail(emailOrPhone)) {
             email = emailOrPhone
             phone = ""
-        } else if (isValidPhone(emailOrPhone)) {
+        } else if (ValidationUtils.isValidPhone(emailOrPhone)) {
             phone = emailOrPhone
             email = ""
         } else {
-            return false // Invalid input
+            return false
         }
 
         if (users.any {
                 it.username == username || it.email == email || it.phone == phone
-            }) return false // Already exists
+            }) return false
 
-        val finalImageUri = imageUri?.toString() ?: "man" // default image if null
+        val finalImageUri = imageUri?.toString() ?: "man"
         val newUser = User(username, email, phone, password, finalImageUri)
         users.add(newUser)
         return true
     }
 
-    // Login with username or email or phone
+    // Online register
+    fun registerUserOnline(user: User, onResult: (Boolean, String?) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.apiService.register(user)
+                if (response.isSuccessful) {
+                    onResult(true, null)
+                } else {
+                    onResult(false, response.errorBody()?.string() ?: "Registration failed")
+                }
+            } catch (e: Exception) {
+                onResult(false, e.message)
+            }
+        }
+    }
+
+    // Login
     fun login(input: String, password: String): Boolean {
         val matchedUser = users.find { user ->
             (user.username == input || user.email == input || user.phone == input) &&
@@ -96,12 +108,6 @@ class RajbariViewModel : ViewModel() {
         )
     }
 
-    private fun isValidEmail(input: String): Boolean =
-        Patterns.EMAIL_ADDRESS.matcher(input).matches()
-
-    private fun isValidPhone(input: String): Boolean =
-        Patterns.PHONE.matcher(input).matches()
-
     val sections = listOf(
         Section("শিক্ষা", "📚", "education"),
         Section("ডাক্তার", "🩺", "doctor"),
@@ -118,8 +124,8 @@ class RajbariViewModel : ViewModel() {
         Section("কুরিয়ার সার্ভিস", "📦", "courier"),
         Section("চাকরি ও প্রশিক্ষণ", "💼", "jobs_training"),
         Section("হোটেল রেস্টুরেন্ট", "🍽️", "hotels_restaurants"),
-        Section("লোকাল মার্কেট", "🛍️", "local_market"),
-        Section("ব্যবসা ও কৃষি সহায়তা", "🌾", "business_agriculture"),
+        Section("শপিং", "🛍️", "Shopping"),
+        Section("নার্সারি ", "🌾", "Nursery"),
         Section("কাছাকাছি মসজিদ", "🕌", "mosque_nearby")
     )
 }

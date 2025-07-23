@@ -30,6 +30,7 @@ fun HomeScreen(
             .fillMaxSize()
             .padding(horizontal = 16.dp, vertical = 20.dp)
     ) {
+        // 🏙️ Header Title
         Text(
             text = "🏙️ রাজবাড়ী জেলা অ্যাপস",
             fontSize = 32.sp,
@@ -41,6 +42,7 @@ fun HomeScreen(
                 .padding(bottom = 16.dp)
         )
 
+        // 📸 Banner Image
         Image(
             painter = painterResource(id = R.drawable.ad_banner),
             contentDescription = "বিজ্ঞাপন ব্যানার",
@@ -51,11 +53,14 @@ fun HomeScreen(
             contentScale = ContentScale.Crop
         )
 
+        // 🧾 Scrollable Section Grid (only this part scrolls)
         LazyVerticalGrid(
-            columns = GridCells.Fixed(3),
+            columns = GridCells.Fixed(4),
             verticalArrangement = Arrangement.spacedBy(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f) // 🔥 Makes this scrollable, but others fixed
         ) {
             items(sections) { section ->
                 SectionCard(

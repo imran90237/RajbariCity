@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
+import com.example.rajbaricity.ui.RajbariViewModel
 import kotlinx.coroutines.launch
 import java.util.*
 

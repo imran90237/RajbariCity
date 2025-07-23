@@ -19,48 +19,28 @@ fun DoctorScreen(
     onHomeClick: () -> Unit = {}
 ) {
     val specialties = listOf(
-        // 🩺 General Medicine
         "medicine" to "💊 মেডিসিন",
         "hormone" to "🧬 হরমোন",
         "nutrition" to "🥦 পুষ্টি",
         "pain" to "🌪️ ব্যথা",
         "asthma" to "🌬️ অ্যাজমা ও বক্ষ",
         "cancer" to "🎗️ ক্যান্সার",
-
-        // 🧠 Mental & Neurology
         "monorog" to "🧠 মনোরোগ",
-
-        // ❤️ Internal Organs
         "hridrog" to "❤️ হৃদরোগ",
         "kidney" to "🚰 কিডনি",
         "urology" to "🧫 ইউরোলজি",
-
-        // 🌸 Child & Women
         "child" to "🛝 শিশুরোগ",
         "gynae" to "🌸 গাইনি",
-
-        // 🔬 Diagnostic & Lab
-//        "diagnostic" to "🧪 ডায়াগনস্টিক",
-
-        // 🦷 Dental, Eye & ENT
         "dental" to "🦷 ডেন্টাল",
         "eye" to "👁️ চক্ষু",
         "ent" to "👃 নাক কান গলা",
-
-        // 🔪 Surgical
         "surgery" to "🔪 সার্জারি",
         "orthopedic" to "🦴 অর্থোপেডিক",
         "plastic" to "🧊 প্লাস্টিক",
         "piles" to "🔥 পাইলস",
-
-        // 🧴 Skin & Sexual Health
         "chormo" to "🧴 চর্ম ও যৌন",
-
-        // 🤲 Therapy
         "physiotherapy" to "👐 ফিজিওথেরাপি",
         "physical" to "🌀 ফিজিক্যাল",
-
-        // 🌿 Alternative
         "homeo" to "🌿 হোমিও"
     )
 
@@ -81,7 +61,8 @@ fun DoctorScreen(
 
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .fillMaxSize(), // পূর্ণ স্ক্রিন নেয় এবং স্ক্রল করে
             verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
@@ -90,27 +71,29 @@ fun DoctorScreen(
                     onClick = { onDepartmentClick(key) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1f),
+                        .aspectRatio(1.2f),
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(containerColor = Color(0xFFE3F2FD)),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
                     Box(
                         contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(12.dp)
                     ) {
                         Text(
                             text = label,
-                            fontSize = 19.sp,
+                            fontSize = 17.sp,
                             fontWeight = FontWeight.Medium,
                             textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(8.dp)
+                            softWrap = true,
+                            maxLines = 3,
+                            modifier = Modifier.fillMaxWidth()
                         )
                     }
                 }
             }
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-    }
-}
+    } // <-- এই হচ্ছে Column এর বন্ধনী
+} // <-- এই হচ্ছে DoctorScreen ফাংশনের শেষ বন্ধনী
