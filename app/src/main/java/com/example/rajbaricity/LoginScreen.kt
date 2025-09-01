@@ -80,7 +80,7 @@ fun LoginScreen(
             OutlinedTextField(
                 value = username,
                 onValueChange = { username = it },
-                label = { Text("ইউজারনেম / ইমেইল / ফোন") },
+                label = { Text("ইউজারনেম / ইমেইল ") },
                 modifier = Modifier.fillMaxWidth()
             )
 

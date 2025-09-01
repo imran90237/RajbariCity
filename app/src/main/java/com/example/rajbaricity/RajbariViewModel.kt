@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rajbaricity.model.Section
 import com.example.rajbaricity.model.User
+import com.example.rajbaricity.model.VerificationRequest
 import com.example.rajbaricity.network.RetrofitClient
 import com.example.rajbaricity.utils.ValidationUtils
 import kotlinx.coroutines.launch
@@ -56,14 +57,30 @@ class RajbariViewModel : ViewModel() {
     }
 
     // Online register
-    fun registerUserOnline(user: User, onResult: (Boolean, String?) -> Unit) {
+    fun sendVerificationCode(user: User, onResult: (Boolean, String?) -> Unit) {
         viewModelScope.launch {
             try {
-                val response = RetrofitClient.apiService.register(user)
+                val response = RetrofitClient.apiService.sendVerificationCode(user)
                 if (response.isSuccessful) {
                     onResult(true, null)
                 } else {
-                    onResult(false, response.errorBody()?.string() ?: "Registration failed")
+                    onResult(false, response.errorBody()?.string() ?: "Failed to send code")
+                }
+            } catch (e: Exception) {
+                onResult(false, e.message)
+            }
+        }
+    }
+
+    fun verifyAndRegister(email: String, code: String, onResult: (Boolean, String?) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val verificationRequest = VerificationRequest(email, code)
+                val response = RetrofitClient.apiService.verifyAndRegister(verificationRequest)
+                if (response.isSuccessful) {
+                    onResult(true, null)
+                } else {
+                    onResult(false, response.errorBody()?.string() ?: "Verification failed")
                 }
             } catch (e: Exception) {
                 onResult(false, e.message)

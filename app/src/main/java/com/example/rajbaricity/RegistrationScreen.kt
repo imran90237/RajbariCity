@@ -173,9 +173,14 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RegistrationScreen(navController: NavController, viewModel: RajbariViewModel) {
+fun RegistrationScreen(
+    navController: NavController,
+    viewModel: RajbariViewModel,
+    onRegisterSuccess: (String) -> Unit
+) {
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
+    var isLoading by remember { mutableStateOf(false) }
 
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -247,41 +252,40 @@ fun RegistrationScreen(navController: NavController, viewModel: RajbariViewModel
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Button(
-                onClick = {
-                    // Basic input validation
-                    if (username.isBlank() || email.isBlank() || password.isBlank()) {
-                        coroutineScope.launch {
-                            snackbarHostState.showSnackbar("সব ফিল্ড পূরণ করুন")
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else {
+                Button(
+                    onClick = {
+                        if (username.isBlank() || email.isBlank() || password.isBlank()) {
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("সব ফিল্ড পূরণ করুন")
+                            }
+                            return@Button
                         }
-                        return@Button
-                    }
+                        isLoading = true
+                        val user = User(
+                            username = username.trim(),
+                            email = email.trim(),
+                            password = password,
+                            profileImageUri = profileImageUri?.toString() ?: "man"
+                        )
 
-                    // Create user object
-                    val user = User(
-                        username = username.trim(),
-                        email = email.trim(),
-                        password = password,
-                        profileImageUri = profileImageUri?.toString() ?: "man"
-                    )
-
-                    // Call ViewModel to register online
-                    viewModel.registerUserOnline(user) { success, message ->
-                        coroutineScope.launch {
+                        viewModel.sendVerificationCode(user) { success, message ->
+                            isLoading = false
                             if (success) {
-                                snackbarHostState.showSnackbar("রেজিস্ট্রেশন সফল হয়েছে")
-                                navController.navigate("login") {
-                                    popUpTo("register") { inclusive = true }
-                                }
+                                onRegisterSuccess(user.email)
                             } else {
-                                snackbarHostState.showSnackbar(message ?: "রেজিস্ট্রেশন ব্যর্থ হয়েছে")
+                                coroutineScope.launch {
+                                    snackbarHostState.showSnackbar(message ?: "Failed to send verification code")
+                                }
                             }
                         }
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("রেজিস্টার")
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("রেজিস্টার")
+                }
             }
         }
     }

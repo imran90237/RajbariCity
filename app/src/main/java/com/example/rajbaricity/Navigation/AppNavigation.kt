@@ -18,7 +18,25 @@ fun AppNavGraph(navController: NavHostController, viewModel: RajbariViewModel) {
     NavHost(navController = navController, startDestination = startDestination) {
 
         composable("register") {
-            RegistrationScreen(navController, viewModel)
+            RegistrationScreen(
+                navController = navController,
+                viewModel = viewModel,
+                onRegisterSuccess = { email ->
+                    navController.navigate("verification/$email")
+                }
+            )
+        }
+
+        composable(
+            route = "verification/{email}",
+            arguments = listOf(navArgument("email") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val email = backStackEntry.arguments?.getString("email") ?: ""
+            VerificationScreen(
+                navController = navController,
+                viewModel = viewModel,
+                email = email
+            )
         }
 
         composable("login") {
