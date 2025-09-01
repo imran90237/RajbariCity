@@ -33,7 +33,7 @@ fun ProfileScreen(navController: NavController, viewModel: RajbariViewModel) {
     val userName = viewModel.loggedInUserName ?: "ব্যবহারকারী"
     val userEmail = viewModel.loggedInUserEmail ?: "example@email.com"
     val userImageUri: Uri? = viewModel.loggedInUserImageUri
-    val userPhone = viewModel.loggedInUserPhone ?: "মোবাইল নম্বর নেই"
+    
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -73,7 +73,7 @@ fun ProfileScreen(navController: NavController, viewModel: RajbariViewModel) {
                     Spacer(modifier = Modifier.height(8.dp))
 
                     // User Info Section
-                    UserHeader(userName, userPhone, userImageUri)
+                    UserHeader(userName, userImageUri)
 
                     Divider(
                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
@@ -159,7 +159,6 @@ fun ProfileScreen(navController: NavController, viewModel: RajbariViewModel) {
 @Composable
 private fun UserHeader(
     userName: String,
-    userPhone: String,
     userImageUri: Uri?
 )
 {
@@ -202,11 +201,7 @@ private fun UserHeader(
             text = userName,
             style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold)
         )
-        Text(
-            text = userPhone,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+        
     }
 }
 

@@ -26,8 +26,7 @@ class RajbariViewModel : ViewModel() {
     val loggedInUserEmail: String?
         get() = loggedInUser?.email
 
-    val loggedInUserPhone: String?
-        get() = loggedInUser?.phone
+    
 
     val loggedInUserImage: String?
         get() = loggedInUser?.profileImageUri
@@ -38,29 +37,20 @@ class RajbariViewModel : ViewModel() {
     // Local register
     fun registerUser(
         username: String,
-        emailOrPhone: String,
+        email: String,
         password: String,
         imageUri: Uri?
     ): Boolean {
-        val email: String
-        val phone: String
-
-        if (ValidationUtils.isValidEmail(emailOrPhone)) {
-            email = emailOrPhone
-            phone = ""
-        } else if (ValidationUtils.isValidPhone(emailOrPhone)) {
-            phone = emailOrPhone
-            email = ""
-        } else {
+        if (!ValidationUtils.isValidEmail(email)) {
             return false
         }
 
         if (users.any {
-                it.username == username || it.email == email || it.phone == phone
+                it.username == username || it.email == email
             }) return false
 
         val finalImageUri = imageUri?.toString() ?: "man"
-        val newUser = User(username, email, phone, password, finalImageUri)
+        val newUser = User(username, email, password, finalImageUri)
         users.add(newUser)
         return true
     }
@@ -84,7 +74,7 @@ class RajbariViewModel : ViewModel() {
     // Login
     fun login(input: String, password: String): Boolean {
         val matchedUser = users.find { user ->
-            (user.username == input || user.email == input || user.phone == input) &&
+            (user.username == input || user.email == input) &&
                     user.password == password
         }
 
@@ -100,11 +90,10 @@ class RajbariViewModel : ViewModel() {
         loggedInUser = null
     }
 
-    fun updateUserProfile(newUsername: String, newEmail: String, newPhone: String) {
+    fun updateUserProfile(newUsername: String, newEmail: String) {
         loggedInUser = loggedInUser?.copy(
             username = newUsername,
-            email = newEmail,
-            phone = newPhone
+            email = newEmail
         )
     }
 

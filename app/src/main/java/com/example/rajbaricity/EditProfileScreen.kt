@@ -1,3 +1,4 @@
+
 package com.example.rajbaricity
 
 import androidx.compose.foundation.layout.*
@@ -21,7 +22,6 @@ fun EditProfileScreen(
 ) {
     var name by remember { mutableStateOf(viewModel.loggedInUserName ?: "") }
     var email by remember { mutableStateOf(viewModel.loggedInUserEmail ?: "") }
-    var phone by remember { mutableStateOf(viewModel.loggedInUser?.phone ?: "") }
 
     Scaffold(
         topBar = {
@@ -72,22 +72,11 @@ fun EditProfileScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            OutlinedTextField(
-                value = phone,
-                onValueChange = { phone = it },
-                label = { Text("ফোন নম্বর") },
-                singleLine = true,
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                modifier = Modifier.fillMaxWidth()
-            )
-
             Spacer(modifier = Modifier.height(32.dp))
 
             Button(
                 onClick = {
-                    viewModel.updateUserProfile(name, email, phone)
+                    viewModel.updateUserProfile(name, email)
                     navController.popBackStack()
                 },
                 modifier = Modifier

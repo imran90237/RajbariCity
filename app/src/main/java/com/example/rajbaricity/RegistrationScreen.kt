@@ -178,7 +178,7 @@ fun RegistrationScreen(navController: NavController, viewModel: RajbariViewModel
     val coroutineScope = rememberCoroutineScope()
 
     var username by remember { mutableStateOf("") }
-    var emailOrPhone by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var profileImageUri by remember { mutableStateOf<Uri?>(null) }
 
@@ -228,9 +228,9 @@ fun RegistrationScreen(navController: NavController, viewModel: RajbariViewModel
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
-                value = emailOrPhone,
-                onValueChange = { emailOrPhone = it },
-                label = { Text("ইমেইল / মোবাইল নম্বর") },
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("ইমেইল") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
                 modifier = Modifier.fillMaxWidth()
             )
@@ -250,22 +250,17 @@ fun RegistrationScreen(navController: NavController, viewModel: RajbariViewModel
             Button(
                 onClick = {
                     // Basic input validation
-                    if (username.isBlank() || emailOrPhone.isBlank() || password.isBlank()) {
+                    if (username.isBlank() || email.isBlank() || password.isBlank()) {
                         coroutineScope.launch {
                             snackbarHostState.showSnackbar("সব ফিল্ড পূরণ করুন")
                         }
                         return@Button
                     }
 
-                    // Determine if input is email or phone
-                    val email = if (emailOrPhone.contains("@")) emailOrPhone else ""
-                    val phone = if (!emailOrPhone.contains("@")) emailOrPhone else ""
-
                     // Create user object
                     val user = User(
                         username = username.trim(),
                         email = email.trim(),
-                        phone = phone.trim(),
                         password = password,
                         profileImageUri = profileImageUri?.toString() ?: "man"
                     )
@@ -291,3 +286,4 @@ fun RegistrationScreen(navController: NavController, viewModel: RajbariViewModel
         }
     }
 }
+
