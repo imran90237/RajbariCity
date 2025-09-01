@@ -27,7 +27,7 @@ class RajbariViewModel : ViewModel() {
     val loggedInUserEmail: String?
         get() = loggedInUser?.email
 
-    
+
 
     val loggedInUserImage: String?
         get() = loggedInUser?.profileImageUri
@@ -51,7 +51,7 @@ class RajbariViewModel : ViewModel() {
             }) return false
 
         val finalImageUri = imageUri?.toString() ?: "man"
-        val newUser = User(username, email, password, finalImageUri)
+        val newUser = User(username = username, email = email, password = password, profileImageUri = finalImageUri)
         users.add(newUser)
         return true
     }

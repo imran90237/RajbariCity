@@ -17,4 +17,3 @@ interface ApiService {
     @POST("api/users/verify-and-register")
     suspend fun verifyAndRegister(@Body verificationRequest: VerificationRequest): Response<ResponseBody>
 }
-
