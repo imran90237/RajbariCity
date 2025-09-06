@@ -1,6 +1,6 @@
 package com.example.rajbaricity.model
 
 data class LoginRequest(
-    val usernameOrEmail: String,
+    val email: String,
     val password: String
 )

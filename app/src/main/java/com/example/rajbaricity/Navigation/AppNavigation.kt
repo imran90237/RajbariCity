@@ -8,11 +8,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.rajbaricity.*
 import com.example.rajbaricity.ui.RajbariViewModel
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun AppNavGraph(navController: NavHostController, viewModel: RajbariViewModel) {
-    val startDestination = if (!viewModel.isRegistered) "register"
-    else if (viewModel.loggedInUserName == null) "login"
+    val startDestination = if (viewModel.loggedInUserName == null) "login"
     else "home"
 
     NavHost(navController = navController, startDestination = startDestination) {
@@ -21,21 +23,38 @@ fun AppNavGraph(navController: NavHostController, viewModel: RajbariViewModel) {
             RegistrationScreen(
                 navController = navController,
                 viewModel = viewModel,
-                onRegisterSuccess = { email ->
-                    navController.navigate("verification/$email")
+                onRegisterSuccess = { username, email, password ->
+                    val encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8.toString())
+                    val encodedEmail = URLEncoder.encode(email, StandardCharsets.UTF_8.toString())
+                    val encodedPassword = URLEncoder.encode(password, StandardCharsets.UTF_8.toString())
+                                        navController.navigate("verification/$encodedUsername/$encodedEmail/$encodedPassword")
                 }
             )
         }
 
         composable(
-            route = "verification/{email}",
-            arguments = listOf(navArgument("email") { type = NavType.StringType })
+            route = "verification/{username}/{email}/{password}",
+            arguments = listOf(
+                navArgument("username") { type = NavType.StringType },
+                navArgument("email") { type = NavType.StringType },
+                navArgument("password") { type = NavType.StringType }
+            )
         ) { backStackEntry ->
-            val email = backStackEntry.arguments?.getString("email") ?: ""
+            val username = backStackEntry.arguments?.getString("username")?.let {
+                URLDecoder.decode(it, StandardCharsets.UTF_8.toString())
+            } ?: ""
+            val email = backStackEntry.arguments?.getString("email")?.let {
+                URLDecoder.decode(it, StandardCharsets.UTF_8.toString())
+            } ?: ""
+            val password = backStackEntry.arguments?.getString("password")?.let {
+                URLDecoder.decode(it, StandardCharsets.UTF_8.toString())
+            } ?: ""
             VerificationScreen(
                 navController = navController,
                 viewModel = viewModel,
-                email = email
+                username = username,
+                email = email,
+                password = password
             )
         }
 

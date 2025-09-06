@@ -1,5 +1,7 @@
 package com.example.rajbaricity
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -18,7 +20,9 @@ import com.example.rajbaricity.ui.RajbariViewModel
 fun VerificationScreen(
     navController: NavController,
     viewModel: RajbariViewModel,
-    email: String
+    username: String,
+    email: String,
+    password: String
 ) {
     var code by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
@@ -61,7 +65,8 @@ fun VerificationScreen(
                     onClick = {
                         isLoading = true
                         errorMessage = null
-                        viewModel.verifyAndRegister(email, code) { success, message ->
+                        Log.d("VerificationScreen", "Username: $username, Email: $email, Code: ${code.trim()}, Password: 'hidden'")
+                        viewModel.verifyAndRegister(username, email, code.trim(), password) { success, message ->
                             isLoading = false
                             if (success) {
                                 navController.navigate("login") {
@@ -69,6 +74,11 @@ fun VerificationScreen(
                                 }
                             } else {
                                 errorMessage = message ?: "Verification failed"
+                                Toast.makeText(
+                                    navController.context,
+                                    message ?: navController.context.getString(R.string.email_already_registered),
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                         }
                     },

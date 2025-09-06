@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RajbariCity</string>
+    <string name="email_already_registered">This email is already registered.</string>
 </resources>

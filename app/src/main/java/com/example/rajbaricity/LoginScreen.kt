@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.example.rajbaricity.ui.RajbariViewModel
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -23,13 +24,14 @@ fun LoginScreen(
     navController: NavController,
     viewModel: RajbariViewModel
 ) {
-    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var loginFailed by remember { mutableStateOf(false) }
-
-    val loggedInUser by remember { derivedStateOf { viewModel.loggedInUser } }
+    var isLoading by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text("লগইন পেজ") }
@@ -45,16 +47,8 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            // Profile Image
-            val profilePainter = when {
-                loggedInUser?.profileImageUri?.isNotBlank() == true &&
-                        loggedInUser?.profileImageUri != "man" ->
-                    rememberAsyncImagePainter(loggedInUser?.profileImageUri)
-                else -> painterResource(id = R.drawable.man)
-            }
-
             Image(
-                painter = profilePainter,
+                painter = painterResource(id = R.drawable.man),
                 contentDescription = "Profile Picture",
                 modifier = Modifier
                     .size(100.dp)
@@ -65,22 +59,16 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = "স্বাগতম, ${loggedInUser?.username ?: "ব্যবহারকারী"}!",
+                text = "স্বাগতম!",
                 style = MaterialTheme.typography.headlineSmall
-            )
-
-            Text(
-                text = loggedInUser?.email ?: "example@email.com",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.Gray
             )
 
             Spacer(modifier = Modifier.height(24.dp))
 
             OutlinedTextField(
-                value = username,
-                onValueChange = { username = it },
-                label = { Text("ইউজারনেম / ইমেইল ") },
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("ইমেইল") },
                 modifier = Modifier.fillMaxWidth()
             )
 
@@ -94,33 +82,37 @@ fun LoginScreen(
                 visualTransformation = PasswordVisualTransformation()
             )
 
-            if (loginFailed) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(
-                    text = "ইউজারনেম, ইমেইল বা পাসওয়ার্ড ভুল হয়েছে",
-                    color = Color.Red
-                )
-            }
-
             Spacer(modifier = Modifier.height(24.dp))
 
-            Button(
-                onClick = {
-                    if (username.isNotBlank() && password.isNotBlank()) {
-                        val success = viewModel.login(username, password)
-                        if (success) {
-                            loginFailed = false
-                            navController.navigate("home") {
-                                popUpTo("login") { inclusive = true }
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else {
+                Button(
+                    onClick = {
+                        if (email.isNotBlank() && password.isNotBlank()) {
+                            isLoading = true
+                            viewModel.login(email, password) { success, message ->
+                                isLoading = false
+                                if (success) {
+                                    navController.navigate("home") {
+                                        popUpTo("login") { inclusive = true }
+                                    }
+                                } else {
+                                    coroutineScope.launch {
+                                        snackbarHostState.showSnackbar(message ?: "Login failed")
+                                    }
+                                }
                             }
                         } else {
-                            loginFailed = true
+                            coroutineScope.launch {
+                                snackbarHostState.showSnackbar("ইমেইল এবং পাসওয়ার্ড দিন")
+                            }
                         }
-                    }
-                },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("লগইন")
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("লগইন")
+                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))

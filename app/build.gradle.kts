@@ -56,6 +56,7 @@ dependencies {
 
     // ✅ Overpass API HTTP client
     implementation("com.squareup.okhttp3:okhttp:4.9.3")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.9.3")
 
     // ✅ Compose & Material
     implementation(platform(libs.androidx.compose.bom))

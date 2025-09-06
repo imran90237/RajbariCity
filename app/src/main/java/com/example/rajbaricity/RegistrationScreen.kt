@@ -30,7 +30,7 @@ import kotlinx.coroutines.launch
 fun RegistrationScreen(
     navController: NavController,
     viewModel: RajbariViewModel,
-    onRegisterSuccess: (String) -> Unit
+    onRegisterSuccess: (String, String, String) -> Unit
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -122,16 +122,16 @@ fun RegistrationScreen(
                             username = username.trim(),
                             email = email.trim(),
                             password = password,
-                            profileImageUri = profileImageUri?.toString()
+                            profileImageUrl = profileImageUri?.toString()
                         )
 
                         viewModel.sendVerificationCode(user) { success, message ->
                             isLoading = false
                             if (success) {
-                                onRegisterSuccess(user.email)
+                                onRegisterSuccess(user.username, user.email, password)
                             } else {
                                 coroutineScope.launch {
-                                    snackbarHostState.showSnackbar(message ?: "Failed to send verification code")
+                                    snackbarHostState.showSnackbar(message ?: "An unexpected error occurred during registration.")
                                 }
                             }
                         }
@@ -140,6 +140,16 @@ fun RegistrationScreen(
                 ) {
                     Text("রেজিস্টার")
                 }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            TextButton(onClick = {
+                navController.navigate("login") {
+                    popUpTo("register") { inclusive = true }
+                }
+            }) {
+                Text("অ্যাকাউন্ট আছে? লগইন করুন")
             }
         }
     }
