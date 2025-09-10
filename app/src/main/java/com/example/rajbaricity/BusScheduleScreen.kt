@@ -26,6 +26,12 @@ import com.example.rajbaricity.ui.RajbariViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BusScheduleScreen(viewModel: RajbariViewModel) {
+    // Fetch data when the screen is first composed
+    LaunchedEffect(Unit) {
+        viewModel.getBusCounters()
+        viewModel.getBusTimes()
+    }
+
     val tabTitles = listOf("🚌 কাউন্টার সমূহ", "🕐 সময়সূচী")
     var selectedTab by remember { mutableStateOf(0) }
     val busCounters by viewModel.busCounters.collectAsState()
@@ -63,9 +69,80 @@ fun BusScheduleScreen(viewModel: RajbariViewModel) {
 
 // --- COUNTER TAB ---
 @Composable
-fun CounterTabScreen(busList: List<BusCounter>, viewModel: RajbariViewModel) {
+fun CounterTabScreen(dynamicBusList: List<BusCounter>, viewModel: RajbariViewModel) {
     var showDialog by remember { mutableStateOf(false) }
     var selectedBus by remember { mutableStateOf<BusCounter?>(null) }
+
+    val staticBusList = remember {
+        listOf(
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "পাংশা", contact = "01966274466"),
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "বাংলাদেশ হার্ট", contact = "01966274400"),
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "মাটিপাড়া", contact = "01400077304"),
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "বাণীবহ", contact = "01400522110"),
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "বহরপুর", contact = "01933799441"),
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "বালিয়াকান্দি", contact = "01909191555"),
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "নারুয়া", contact = "01946181118"),
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "গান্ধিমারা", contact = "01400567996"),
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "চন্দনি", contact = "01400556233"),
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "দরগাটোলা", contact = "01952530052"),
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "হাবাসপুর", contact = "01724822671"),
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "জামালপুর", contact = "01967737372"),
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "কালিবাড়ি", contact = "01709299767"),
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "নদুরিয়াঘাট", contact = "017160058957"),
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "বাহেরমোড়", contact = "01714210207"),
+            BusCounter(counterName = "রাবেয়া পরিবহন", location = "বাহাদুরপুর", contact = "01713549552"),
+
+            // সৌহার্দ্য পরিবহন
+            BusCounter(counterName = "সৌহার্দ্য পরিবহন", location = "গাবতলী (ঢাকা)", contact = "01768235535"),
+            BusCounter(counterName = "সৌহার্দ্য পরিবহন", location = "পাংশা", contact = "01718558338"),
+            BusCounter(counterName = "সৌহার্দ্য পরিবহন", location = "রাজবাড়ী", contact = "01733167396"),
+            BusCounter(counterName = "সৌহার্দ্য পরিবহন", location = "নদুরিয়াঘাট", contact = "01716005957"),
+            BusCounter(counterName = "সৌহার্দ্য পরিবহন", location = "বাহেরমোড়", contact = "01713905113"),
+            BusCounter(counterName = "সৌহার্দ্য পরিবহন", location = "জামালপুর", contact = "01729691558"),
+            BusCounter(counterName = "সৌহার্দ্য পরিবহন", location = "বহরপুর", contact = "01736785093"),
+            BusCounter(counterName = "সৌহার্দ্য পরিবহন", location = "বালিয়াকান্দি", contact = "01734626147"),
+            BusCounter(counterName = "সৌহার্দ্য পরিবহন", location = "নারুয়া", contact = "01916723226"),
+            BusCounter(counterName = "সৌহার্দ্য পরিবহন", location = "হাবাসপুর", contact = "01719799100"),
+            BusCounter(counterName = "সৌহার্দ্য পরিবহন", location = "কালিবাড়ি", contact = "01825408210"),
+            BusCounter(counterName = "সৌহার্দ্য পরিবহন", location = "বাণীবহ", contact = "01740909540"),
+            BusCounter(counterName = "সৌহার্দ্য পরিবহন", location = "সেনগ্রাম", contact = "01726960435"),
+            BusCounter(counterName = "সৌহার্দ্য পরিবহন", location = "মীরগী বাজার", contact = "01740849550"),
+            BusCounter(counterName = "সৌহার্দ্য পরিবহন", location = "বাগডুলি", contact = "01724364707"),
+
+            // গোল্ডেন লাইন পরিবহন
+            BusCounter(counterName = "গোল্ডেন লাইন পরিবহন", location = "রাজবাড়ী", contact = "01711151864"),
+
+            // জামান ইন্টারপ্রাইজ
+            BusCounter(counterName = "জামান ইন্টারপ্রাইজ", location = "পাংশা", contact = "01333662823"),
+            BusCounter(counterName = "জামান ইন্টারপ্রাইজ", location = "ঢাকা", contact = "01333390582"),
+            BusCounter(counterName = "জামান ইন্টারপ্রাইজ", location = "গান্ধিমারা", contact = "01826746959"),
+            BusCounter(counterName = "জামান ইন্টারপ্রাইজ", location = "কালুখালী", contact = "01126746954"),
+            BusCounter(counterName = "জামান ইন্টারপ্রাইজ", location = "সোনাপুর মোড়", contact = "01826746950"),
+            BusCounter(counterName = "জামান ইন্টারপ্রাইজ", location = "মাছপাড়া", contact = "01826746959"),
+            BusCounter(counterName = "জামান ইন্টারপ্রাইজ", location = "হাবাসপুর", contact = "01333390586"),
+            BusCounter(counterName = "জামান ইন্টারপ্রাইজ", location = "সেনগ্রাম", contact = "01333662827"),
+
+            // হানিফ এন্টারপ্রাইজ
+            BusCounter(counterName = "হানিফ এন্টারপ্রাইজ", location = "রাজবাড়ী", contact = "01794594136"),
+
+            // রাজবাড়ী পরিবহন সপ্তবর্ণা
+            BusCounter(counterName = "রাজবাড়ী পরিবহন সপ্তবর্ণা", location = "রাজবাড়ী মালিক সমিতি", contact = "01907099021"),
+            BusCounter(counterName = "রাজবাড়ী পরিবহন সপ্তবর্ণা", location = "পাংশা", contact = "01907099017"),
+            BusCounter(counterName = "রাজবাড়ী পরিবহন সপ্তবর্ণা", location = "কালুখালী", contact = "01907099018"),
+            BusCounter(counterName = "রাজবাড়ী পরিবহন সপ্তবর্ণা", location = "মাসপাড়া", contact = "01907099023"),
+            BusCounter(counterName = "রাজবাড়ী পরিবহন সপ্তবর্ণা", location = "গান্ধিমারা", contact = "01907099019"),
+            BusCounter(counterName = "রাজবাড়ী পরিবহন সপ্তবর্ণা", location = "হাবাসপুর", contact = "01724822671"),
+            BusCounter(counterName = "রাজবাড়ী পরিবহন সপ্তবর্ণা", location = "বাহাদুরপুর", contact = "01713549552"),
+            BusCounter(counterName = "রাজবাড়ী পরিবহন সপ্তবর্ণা", location = "মুরগি ফার্ম, রাজবাড়ী", contact = "01907099020"),
+            BusCounter(counterName = "রাজবাড়ী পরিবহন সপ্তবর্ণা", location = "কালিতলা", contact = "01907099024"),
+            BusCounter(counterName = "রাজবাড়ী পরিবহন সপ্তবর্ণা", location = "দরগাতলা", contact = "01975339218"),
+            BusCounter(counterName = "রাজবাড়ী পরিবহন সপ্তবর্ণা", location = "উদয়পুর", contact = "01754417406")
+        )
+    }
+
+    val combinedBusList = remember(staticBusList, dynamicBusList) {
+        staticBusList + dynamicBusList
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -77,7 +154,7 @@ fun CounterTabScreen(busList: List<BusCounter>, viewModel: RajbariViewModel) {
             Text("📍 রাজবাড়ীর বাস কাউন্টার", style = MaterialTheme.typography.titleLarge)
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                items(busList) { bus ->
+                items(combinedBusList) { bus ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -121,9 +198,21 @@ fun CounterTabScreen(busList: List<BusCounter>, viewModel: RajbariViewModel) {
 }
 
 // --- TIME SCHEDULE TAB ---
-@Composable
-fun TimeScheduleTab(busTimes: List<Bustime>, viewModel: RajbariViewModel) {
+ @Composable
+fun TimeScheduleTab(dynamicBusTimes: List<Bustime>, viewModel: RajbariViewModel) {
     var showDialog by remember { mutableStateOf(false) }
+
+    val staticBusTimes = remember {
+        listOf(
+            Bustime(busName = "রাবেয়া", fromLocation = "রাজবাড়ী", toLocation = "ঢাকা", time = "৬:০০ AM", contact = "০১৭xxxxxxx"),
+            Bustime(busName = "সৌহার্দ্য", fromLocation = "রাজবাড়ী", toLocation = "চুয়াডাঙ্গা", time = "৭:৩০ AM", contact = "০১৭xxxxxxx"),
+            Bustime(busName = "গোল্ডেন লাইন", fromLocation = "রাজবাড়ী", toLocation = "চট্টগ্রাম", time = "৮:১৫ AM", contact = "০১৮xxxxxxx")
+        )
+    }
+
+    val combinedBusTimes = remember(staticBusTimes, dynamicBusTimes) {
+        staticBusTimes + dynamicBusTimes
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -140,7 +229,7 @@ fun TimeScheduleTab(busTimes: List<Bustime>, viewModel: RajbariViewModel) {
             }
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                items(busTimes) { time ->
+                items(combinedBusTimes) { time ->
                     val context = LocalContext.current
                     Row(
                         modifier = Modifier

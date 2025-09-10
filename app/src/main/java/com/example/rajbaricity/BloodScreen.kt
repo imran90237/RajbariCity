@@ -20,6 +20,12 @@ import com.example.rajbaricity.ui.RajbariViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BloodScreen(viewModel: RajbariViewModel = viewModel()) {
+    // Fetch data when the screen is first composed
+    LaunchedEffect(Unit) {
+        viewModel.getDonors()
+        viewModel.getRequests()
+    }
+
     var selectedTabIndex by remember { mutableStateOf(0) }
     var showDonorDialog by remember { mutableStateOf(false) }
     var showRequestDialog by remember { mutableStateOf(false) }
