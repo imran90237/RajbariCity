@@ -12,62 +12,30 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.rajbaricity.model.BloodDonor
+import com.example.rajbaricity.model.BloodRequest
+import com.example.rajbaricity.ui.RajbariViewModel
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BloodScreen() {
+fun BloodScreen(viewModel: RajbariViewModel = viewModel()) {
     var selectedTabIndex by remember { mutableStateOf(0) }
     var showDonorDialog by remember { mutableStateOf(false) }
     var showRequestDialog by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
 
-    val donors = remember {
-        mutableStateListOf(
-            Donor("Imran", "A+", "2025-06-01", "রাজবাড়ী", "01761690237"),
-            Donor("Abdur Razzak", "B+", "2025-05-24", "পাংশা", "01766838558"),
-            Donor("Ratul", "O+", "2025-02-25", "বালিয়াকান্দি", "01307004750")
-        )
-    }
+    val donors by viewModel.donors.collectAsState()
+    val requests by viewModel.requests.collectAsState()
 
     val filteredDonors = donors.filter {
         it.bloodGroup.contains(searchQuery.text.trim(), ignoreCase = true)
     }
 
-    val requests = remember {
-        mutableStateListOf<BloodRequest>()
-    }
-
     val tabTitles = listOf("রক্তদাতা", "রক্তের প্রয়োজন")
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-
-        if (selectedTabIndex == 0) {
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                label = { Text("রক্তের গ্রুপ দিয়ে খুঁজুন (যেমনঃ A+, O-)") },
-                modifier = Modifier.fillMaxWidth()
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-
-        TabRow(selectedTabIndex = selectedTabIndex) {
-            tabTitles.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index },
-                    text = { Text(title) }
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        when (selectedTabIndex) {
-            0 -> DonorList(filteredDonors)
-            1 -> RequestList(requests)
-        }
-
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomEnd) {
+    Scaffold(
+        floatingActionButton = {
             FloatingActionButton(
                 onClick = {
                     if (selectedTabIndex == 0) showDonorDialog = true
@@ -78,13 +46,48 @@ fun BloodScreen() {
                 Icon(Icons.Default.Add, contentDescription = "Add")
             }
         }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .padding(16.dp)
+        ) {
+
+            if (selectedTabIndex == 0) {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    label = { Text("রক্তের গ্রুপ দিয়ে খুঁজুন (যেমনঃ A+, O-)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+
+            TabRow(selectedTabIndex = selectedTabIndex) {
+                tabTitles.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = { selectedTabIndex = index },
+                        text = { Text(title) }
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            when (selectedTabIndex) {
+                0 -> DonorList(filteredDonors)
+                1 -> RequestList(requests)
+            }
+        }
     }
 
     if (showDonorDialog) {
         DonorInputDialog(
             onDismiss = { showDonorDialog = false },
-            onAddDonor = { donor ->
-                donors.add(donor)
+            onAddDonor = { bloodDonor ->
+                viewModel.addDonor(bloodDonor)
                 showDonorDialog = false
             }
         )
@@ -94,7 +97,7 @@ fun BloodScreen() {
         RequestInputDialog(
             onDismiss = { showRequestDialog = false },
             onAddRequest = { request ->
-                requests.add(request)
+                viewModel.addRequest(request)
                 showRequestDialog = false
             }
         )
@@ -102,7 +105,7 @@ fun BloodScreen() {
 }
 
 @Composable
-fun DonorList(donors: List<Donor>) {
+fun DonorList(donors: List<BloodDonor>) {
     LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items(donors) { donor ->
             Card(
@@ -148,7 +151,7 @@ fun RequestList(requests: List<BloodRequest>) {
 }
 
 @Composable
-fun DonorInputDialog(onDismiss: () -> Unit, onAddDonor: (Donor) -> Unit) {
+fun DonorInputDialog(onDismiss: () -> Unit, onAddDonor: (BloodDonor) -> Unit) {
     var name by remember { mutableStateOf("") }
     var bloodGroup by remember { mutableStateOf("") }
     var donationDate by remember { mutableStateOf("") }
@@ -160,7 +163,7 @@ fun DonorInputDialog(onDismiss: () -> Unit, onAddDonor: (Donor) -> Unit) {
         confirmButton = {
             Button(onClick = {
                 if (name.isNotBlank() && bloodGroup.isNotBlank()) {
-                    onAddDonor(Donor(name, bloodGroup, donationDate, address, phone))
+                    onAddDonor(BloodDonor(name, bloodGroup, donationDate, address, phone))
                 }
             }) {
                 Text("সংরক্ষণ করুন")
@@ -231,21 +234,4 @@ fun RequestInputDialog(onDismiss: () -> Unit, onAddRequest: (BloodRequest) -> Un
     )
 }
 
-// Models
-data class Donor(
-    val name: String,
-    val bloodGroup: String,
-    val donationDate: String,
-    val address: String,
-    val phone: String
-)
 
-data class BloodRequest(
-    val name: String,
-    val bloodGroup: String,
-    val bagCount: String,
-    val dateTime: String,
-    val phone: String,
-    val hospital: String,
-    val details: String
-)

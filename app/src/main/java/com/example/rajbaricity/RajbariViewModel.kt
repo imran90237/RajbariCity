@@ -5,16 +5,29 @@ import android.util.Log
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.rajbaricity.model.BloodDonor
+import com.example.rajbaricity.model.BloodRequest
 import com.example.rajbaricity.model.LoginRequest
 import com.example.rajbaricity.model.Section
 import com.example.rajbaricity.model.User
 import com.example.rajbaricity.model.VerificationRequest
 import com.example.rajbaricity.network.RetrofitClient
 import com.example.rajbaricity.utils.ValidationUtils
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class RajbariViewModel : ViewModel() {
+
+    private val _donors = MutableStateFlow<List<BloodDonor>>(emptyList())
+    val donors: StateFlow<List<BloodDonor>> = _donors
+
+    private val _requests = MutableStateFlow<List<BloodRequest>>(emptyList())
+    val requests: StateFlow<List<BloodRequest>> = _requests
 
     private val users = mutableStateListOf<User>()
 
@@ -37,6 +50,83 @@ class RajbariViewModel : ViewModel() {
 
     val loggedInUserImageUri: Uri?
         get() = loggedInUser?.profileImageUrl?.let { Uri.parse(it) }
+
+    init {
+        getDonors()
+        getRequests()
+    }
+
+    fun getDonors() {
+        Log.d("RajbariViewModel", "Fetching donors...")
+        RetrofitClient.bloodDonorApiService.getDonors().enqueue(object : Callback<List<BloodDonor>> {
+            override fun onResponse(call: Call<List<BloodDonor>>, response: Response<List<BloodDonor>>) {
+                if (response.isSuccessful) {
+                    Log.d("RajbariViewModel", "Donors fetched successfully: ${response.body()?.size} donors")
+                    _donors.value = response.body() ?: emptyList()
+                } else {
+                    Log.e("RajbariViewModel", "Failed to fetch donors. Code: ${response.code()}, Message: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<BloodDonor>>, t: Throwable) {
+                Log.e("RajbariViewModel", "Error fetching donors", t)
+            }
+        })
+    }
+
+    fun addDonor(donor: BloodDonor) {
+        Log.d("RajbariViewModel", "Adding donor: $donor")
+        RetrofitClient.bloodDonorApiService.addDonor(donor).enqueue(object : Callback<BloodDonor> {
+            override fun onResponse(call: Call<BloodDonor>, response: Response<BloodDonor>) {
+                if (response.isSuccessful) {
+                    Log.d("RajbariViewModel", "Donor added successfully: ${response.body()}")
+                    getDonors() // Refresh the list
+                } else {
+                    Log.e("RajbariViewModel", "Failed to add donor. Code: ${response.code()}, Message: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<BloodDonor>, t: Throwable) {
+                Log.e("RajbariViewModel", "Error adding donor", t)
+            }
+        })
+    }
+
+    fun getRequests() {
+        Log.d("RajbariViewModel", "Fetching requests...")
+        RetrofitClient.bloodRequestApiService.getRequests().enqueue(object : Callback<List<BloodRequest>> {
+            override fun onResponse(call: Call<List<BloodRequest>>, response: Response<List<BloodRequest>>) {
+                if (response.isSuccessful) {
+                    Log.d("RajbariViewModel", "Requests fetched successfully: ${response.body()?.size} requests")
+                    _requests.value = response.body() ?: emptyList()
+                } else {
+                    Log.e("RajbariViewModel", "Failed to fetch requests. Code: ${response.code()}, Message: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<BloodRequest>>, t: Throwable) {
+                Log.e("RajbariViewModel", "Error fetching requests", t)
+            }
+        })
+    }
+
+    fun addRequest(request: BloodRequest) {
+        Log.d("RajbariViewModel", "Adding request: $request")
+        RetrofitClient.bloodRequestApiService.addRequest(request).enqueue(object : Callback<BloodRequest> {
+            override fun onResponse(call: Call<BloodRequest>, response: Response<BloodRequest>) {
+                if (response.isSuccessful) {
+                    Log.d("RajbariViewModel", "Request added successfully: ${response.body()}")
+                    getRequests() // Refresh the list
+                } else {
+                    Log.e("RajbariViewModel", "Failed to add request. Code: ${response.code()}, Message: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<BloodRequest>, t: Throwable) {
+                Log.e("RajbariViewModel", "Error adding request", t)
+            }
+        })
+    }
 
     // Local register
     fun registerUser(
