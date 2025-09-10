@@ -1,9 +1,11 @@
 package com.example.rajbaricity.network
 
+import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.net.CookieManager
 
 object RetrofitClient {
     // Ensure you are using the correct IP address for your local server.
@@ -15,8 +17,13 @@ object RetrofitClient {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
-    // Create an OkHttpClient and add the interceptor
+    // Create a CookieJar to handle session cookies
+    private val cookieManager = CookieManager()
+    private val cookieJar = JavaNetCookieJar(cookieManager)
+
+    // Create an OkHttpClient and add the interceptor and cookie jar
     private val okHttpClient = OkHttpClient.Builder()
+        .cookieJar(cookieJar)
         .addInterceptor(loggingInterceptor)
         .build()
 
