@@ -33,4 +33,12 @@ object RetrofitClient {
     val apiService: ApiService by lazy {
         retrofit.create(ApiService::class.java)
     }
+
+    val bloodDonorApiService: BloodDonorApiService by lazy {
+        retrofit.create(BloodDonorApiService::class.java)
+    }
+
+    val bloodRequestApiService: BloodRequestApiService by lazy {
+        retrofit.create(BloodRequestApiService::class.java)
+    }
 }
