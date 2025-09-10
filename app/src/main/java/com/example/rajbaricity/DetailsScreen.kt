@@ -65,7 +65,8 @@ fun DetailsScreen(
                     route = route,
                     selectedSubRoute = selectedSubRoute,
                     onSubRouteSelected = { selectedSubRoute = it },
-                    navController = navController
+                    navController = navController,
+                    viewModel = viewModel
                 )
                 "profile" -> ProfileScreen(navController = navController, viewModel = viewModel)
                 "notification" -> NotificationScreen()
@@ -80,7 +81,8 @@ fun HomeContent(
     route: String,
     selectedSubRoute: String?,
     onSubRouteSelected: (String) -> Unit,
-    navController: NavController
+    navController: NavController,
+    viewModel: RajbariViewModel
 ) {
     Column(
         modifier = Modifier
@@ -102,7 +104,7 @@ fun HomeContent(
                     { departmentRoute -> navController.navigate("details/$departmentRoute") })
                 "hospital" -> HospitalScreen(navController)
                 "blood" -> BloodScreen()
-                "bus_schedule" -> BusScheduleScreen()
+                "bus_schedule" -> BusScheduleScreen(viewModel)
                 "train_schedule" -> TrainScheduleScreen(navController)
                 "emergency" -> EmergencyNumberScreen()
                 "tourist_places" -> TouristPlacesScreen()

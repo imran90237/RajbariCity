@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.rajbaricity.model.BloodDonor
 import com.example.rajbaricity.model.BloodRequest
+import com.example.rajbaricity.model.BusCounter
+import com.example.rajbaricity.model.Bustime
 import com.example.rajbaricity.model.LoginRequest
 import com.example.rajbaricity.model.Section
 import com.example.rajbaricity.model.User
@@ -28,6 +30,12 @@ class RajbariViewModel : ViewModel() {
 
     private val _requests = MutableStateFlow<List<BloodRequest>>(emptyList())
     val requests: StateFlow<List<BloodRequest>> = _requests
+
+    private val _busCounters = MutableStateFlow<List<BusCounter>>(emptyList())
+    val busCounters: StateFlow<List<BusCounter>> = _busCounters
+
+    private val _busTimes = MutableStateFlow<List<Bustime>>(emptyList())
+    val busTimes: StateFlow<List<Bustime>> = _busTimes
 
     private val users = mutableStateListOf<User>()
 
@@ -54,6 +62,80 @@ class RajbariViewModel : ViewModel() {
     init {
         getDonors()
         getRequests()
+        getBusCounters()
+        getBusTimes()
+    }
+
+    fun getBusCounters() {
+        Log.d("RajbariViewModel", "Fetching bus counters...")
+        RetrofitClient.busCounterApiService.getCounters().enqueue(object : Callback<List<BusCounter>> {
+            override fun onResponse(call: Call<List<BusCounter>>, response: Response<List<BusCounter>>) {
+                if (response.isSuccessful) {
+                    Log.d("RajbariViewModel", "Bus counters fetched successfully: ${response.body()?.size} counters")
+                    _busCounters.value = response.body() ?: emptyList()
+                } else {
+                    Log.e("RajbariViewModel", "Failed to fetch bus counters. Code: ${response.code()}, Message: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<BusCounter>>, t: Throwable) {
+                Log.e("RajbariViewModel", "Error fetching bus counters", t)
+            }
+        })
+    }
+
+    fun getBusTimes() {
+        Log.d("RajbariViewModel", "Fetching bus times...")
+        RetrofitClient.bustimeApiService.getBusTimes().enqueue(object : Callback<List<Bustime>> {
+            override fun onResponse(call: Call<List<Bustime>>, response: Response<List<Bustime>>) {
+                if (response.isSuccessful) {
+                    Log.d("RajbariViewModel", "Bus times fetched successfully: ${response.body()?.size} times")
+                    _busTimes.value = response.body() ?: emptyList()
+                } else {
+                    Log.e("RajbariViewModel", "Failed to fetch bus times. Code: ${response.code()}, Message: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<Bustime>>, t: Throwable) {
+                Log.e("RajbariViewModel", "Error fetching bus times", t)
+            }
+        })
+    }
+
+    fun addBusCounter(busCounter: BusCounter) {
+        Log.d("RajbariViewModel", "Adding bus counter: $busCounter")
+        RetrofitClient.busCounterApiService.addCounter(busCounter).enqueue(object : Callback<BusCounter> {
+            override fun onResponse(call: Call<BusCounter>, response: Response<BusCounter>) {
+                if (response.isSuccessful) {
+                    Log.d("RajbariViewModel", "Bus counter added successfully: ${response.body()}")
+                    getBusCounters() // Refresh the list
+                } else {
+                    Log.e("RajbariViewModel", "Failed to add bus counter. Code: ${response.code()}, Message: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<BusCounter>, t: Throwable) {
+                Log.e("RajbariViewModel", "Error adding bus counter", t)
+            }
+        })
+    }
+
+    fun addBusTime(busTime: Bustime) {
+        Log.d("RajbariViewModel", "Adding bus time: $busTime")
+        RetrofitClient.bustimeApiService.addBusTime(busTime).enqueue(object : Callback<Bustime> {
+            override fun onResponse(call: Call<Bustime>, response: Response<Bustime>) {
+                if (response.isSuccessful) {
+                    Log.d("RajbariViewModel", "Bus time added successfully: ${response.body()}")
+                    getBusTimes() // Refresh the list
+                } else {
+                    Log.e("RajbariViewModel", "Failed to add bus time. Code: ${response.code()}, Message: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Bustime>, t: Throwable) {
+                Log.e("RajbariViewModel", "Error adding bus time", t)
+            }
+        })
     }
 
     fun getDonors() {

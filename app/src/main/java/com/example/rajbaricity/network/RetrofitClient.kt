@@ -48,4 +48,12 @@ object RetrofitClient {
     val bloodRequestApiService: BloodRequestApiService by lazy {
         retrofit.create(BloodRequestApiService::class.java)
     }
+
+    val busCounterApiService: BusCounterApiService by lazy {
+        retrofit.create(BusCounterApiService::class.java)
+    }
+
+    val bustimeApiService: BustimeApiService by lazy {
+        retrofit.create(BustimeApiService::class.java)
+    }
 }

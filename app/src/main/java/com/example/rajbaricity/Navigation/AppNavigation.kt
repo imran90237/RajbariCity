@@ -27,7 +27,7 @@ fun AppNavGraph(navController: NavHostController, viewModel: RajbariViewModel) {
                     val encodedUsername = URLEncoder.encode(username, StandardCharsets.UTF_8.toString())
                     val encodedEmail = URLEncoder.encode(email, StandardCharsets.UTF_8.toString())
                     val encodedPassword = URLEncoder.encode(password, StandardCharsets.UTF_8.toString())
-                                        navController.navigate("verification/$encodedUsername/$encodedEmail/$encodedPassword")
+                    navController.navigate("verification/$encodedUsername/$encodedEmail/$encodedPassword")
                 }
             )
         }
