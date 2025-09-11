@@ -6,9 +6,9 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface SchoolApiService {
-    @GET("api/school")
+    @GET("api/schools")
     suspend fun getAll(): List<SchoolInfo>
 
-    @POST("api/school")
+    @POST("api/schools")
     suspend fun create(@Body schoolInfo: SchoolInfo): SchoolInfo
 }
