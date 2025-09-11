@@ -56,4 +56,8 @@ object RetrofitClient {
     val bustimeApiService: BustimeApiService by lazy {
         retrofit.create(BustimeApiService::class.java)
     }
+
+    val carApiService: CarApiService by lazy {
+        retrofit.create(CarApiService::class.java)
+    }
 }

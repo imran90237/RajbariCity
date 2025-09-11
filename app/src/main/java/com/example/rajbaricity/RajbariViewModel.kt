@@ -9,6 +9,7 @@ import com.example.rajbaricity.model.BloodDonor
 import com.example.rajbaricity.model.BloodRequest
 import com.example.rajbaricity.model.BusCounter
 import com.example.rajbaricity.model.Bustime
+import com.example.rajbaricity.model.CarInfo
 import com.example.rajbaricity.model.LoginRequest
 import com.example.rajbaricity.model.Section
 import com.example.rajbaricity.model.User
@@ -37,6 +38,9 @@ class RajbariViewModel : ViewModel() {
     private val _busTimes = MutableStateFlow<List<Bustime>>(emptyList())
     val busTimes: StateFlow<List<Bustime>> = _busTimes
 
+    private val _cars = MutableStateFlow<List<CarInfo>>(emptyList())
+    val cars: StateFlow<List<CarInfo>> = _cars
+
     private val users = mutableStateListOf<User>()
 
     var loggedInUser by mutableStateOf<User?>(null)
@@ -64,7 +68,45 @@ class RajbariViewModel : ViewModel() {
         getRequests()
         getBusCounters()
         getBusTimes()
+        getCars()
     }
+    fun getCars() {
+             Log.d("RajbariViewModel", "Fetching cars...")
+             RetrofitClient.carApiService.getCars().enqueue(object : Callback<List<CarInfo>> {
+                     override fun onResponse(call: Call<List<CarInfo>>, response: Response<List<CarInfo>>) {
+                            if (response.isSuccessful) {
+                                     Log.d("RajbariViewModel", "Cars fetched successfully: ${response.body()?.size} cars")
+                                     _cars.value = response.body() ?: emptyList()
+                                 } else {
+                                     Log.e("RajbariViewModel", "Failed to fetch cars. Code: ${response.code()}, Message: ${response.message()}")
+                                 }
+                         }
+
+                     override fun onFailure(call: Call<List<CarInfo>>, t: Throwable) {
+                             Log.e("RajbariViewModel", "Error fetching cars", t)
+                         }
+                 })
+     }
+
+    fun addCar(carInfo: CarInfo) {
+             Log.d("RajbariViewModel", "Adding car: $carInfo")
+           RetrofitClient.carApiService.addCar(carInfo).enqueue(object : Callback<CarInfo> {
+                   override fun onResponse(call: Call<CarInfo>, response: Response<CarInfo>) {
+                          if (response.isSuccessful) {
+                                  Log.d("RajbariViewModel", "Car added successfully: ${response.body()}")
+                                   getCars() // Refresh the list
+                               } else {
+                                   Log.e("RajbariViewModel", "Failed to add car. Code: ${response.code()}, Message: ${response.message()}")
+                               }
+                     }
+
+                override fun onFailure(call: Call<CarInfo>, t: Throwable) {
+                          Log.e("RajbariViewModel", "Error adding car", t)
+                    }
+            })
+         }
+
+
 
     fun getBusCounters() {
         Log.d("RajbariViewModel", "Fetching bus counters...")

@@ -2,8 +2,11 @@ package com.example.rajbaricity
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -15,30 +18,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-data class CarInfo(
-    val carName: String,
-    val driverName: String,
-    val type: String,
-    val thana: String,
-    val phone: String
-)
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.rajbaricity.model.CarInfo
+import com.example.rajbaricity.ui.RajbariViewModel
 
 @Composable
-fun CarRentScreen() {
+fun CarRentScreen(viewModel: RajbariViewModel = viewModel()) {
+    val carList by viewModel.cars.collectAsState()
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabs = listOf("অ্যাম্বুলেন্স", "প্রাইভেট কার", "মাইক্রোবাস", "পিক আপ", "ট্রাক")
-
-    var carList by remember {
-        mutableStateOf(
-            listOf(
-                CarInfo("Toyota Hiace", "মোঃ কামাল", "মাইক্রোবাস", "রাজবাড়ী সদর", "017XXXXXXXX"),
-                CarInfo("Nissan Ambulance", "আব্দুল মালেক", "অ্যাম্বুলেন্স", "পাংশা", "018XXXXXXXX")
-            )
-        )
-    }
-
     var showAddDialog by remember { mutableStateOf(false) }
+
+    val filteredList by remember(carList, selectedTabIndex) {
+        derivedStateOf {
+            carList.filter { it.type == tabs[selectedTabIndex] }
+        }
+    }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text(
@@ -56,15 +51,25 @@ fun CarRentScreen() {
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-        val filteredList = carList.filter { it.type == tabs[selectedTabIndex] }
+        // --- DEBUGGING TEXT ---
+        Text(
+            text = "Total cars from DB: ${carList.size} | Filtered cars shown: ${filteredList.size}",
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.Red
+        )
+        // --- END DEBUGGING TEXT ---
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         if (filteredList.isEmpty()) {
             Text("কোনো তথ্য পাওয়া যায়নি", color = Color.Gray)
         } else {
-            filteredList.forEach {
-                CarRentCard(info = it)
+            LazyColumn {
+                items(filteredList) { carInfo ->
+                    CarRentCard(info = carInfo)
+                }
             }
         }
 
@@ -84,7 +89,7 @@ fun CarRentScreen() {
         AddCarDialog(
             onDismiss = { showAddDialog = false },
             onAdd = { newCar ->
-                carList = carList + newCar
+                viewModel.addCar(newCar)
                 showAddDialog = false
             }
         )
@@ -120,31 +125,86 @@ fun CarRentCard(info: CarInfo) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddCarDialog(onDismiss: () -> Unit, onAdd: (CarInfo) -> Unit) {
     var carName by remember { mutableStateOf("") }
     var driverName by remember { mutableStateOf("") }
-    var type by remember { mutableStateOf("") }
     var thana by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
+
+    val carTypes = listOf("অ্যাম্বুলেন্স", "প্রাইভেট কার", "মাইক্রোবাস", "পিক আপ", "ট্রাক")
+    var selectedType by remember { mutableStateOf(carTypes[0]) }
+    var isDropdownExpanded by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("নতুন গাড়ির তথ্য যোগ করুন") },
         text = {
-            Column {
-                OutlinedTextField(value = carName, onValueChange = { carName = it }, label = { Text("গাড়ির নাম") })
-                OutlinedTextField(value = driverName, onValueChange = { driverName = it }, label = { Text("ড্রাইভারের নাম") })
-                OutlinedTextField(value = type, onValueChange = { type = it }, label = { Text("গাড়ির ধরন") })
-                OutlinedTextField(value = thana, onValueChange = { thana = it }, label = { Text("থানা") })
-                OutlinedTextField(value = phone, onValueChange = { phone = it }, label = { Text("মোবাইল নম্বর") })
+            Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                OutlinedTextField(
+                    value = carName,
+                    onValueChange = { carName = it },
+                    label = { Text("গাড়ির নাম") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = driverName,
+                    onValueChange = { driverName = it },
+                    label = { Text("ড্রাইভারের নাম") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                ExposedDropdownMenuBox(
+                    expanded = isDropdownExpanded,
+                    onExpandedChange = { isDropdownExpanded = !isDropdownExpanded }
+                ) {
+                    OutlinedTextField(
+                        value = selectedType,
+                        onValueChange = {},
+                        label = { Text("গাড়ির ধরন") },
+                        readOnly = true,
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isDropdownExpanded) },
+                        modifier = Modifier.menuAnchor().fillMaxWidth()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = isDropdownExpanded,
+                        onDismissRequest = { isDropdownExpanded = false }
+                    ) {
+                        carTypes.forEach { type ->
+                            DropdownMenuItem(
+                                text = { Text(type) },
+                                onClick = {
+                                    selectedType = type
+                                    isDropdownExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = thana,
+                    onValueChange = { thana = it },
+                    label = { Text("থানা") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = phone,
+                    onValueChange = { phone = it },
+                    label = { Text("মোবাইল নম্বর") },
+                    modifier = Modifier.fillMaxWidth()
+                )
             }
         },
         confirmButton = {
             TextButton(
                 onClick = {
-                    if (carName.isNotBlank() && driverName.isNotBlank() && type.isNotBlank()) {
-                        onAdd(CarInfo(carName, driverName, type, thana, phone))
+                    Log.d("CarRentScreen", "Add button clicked")
+                    if (carName.isNotBlank() && driverName.isNotBlank()) {
+                        onAdd(CarInfo(null, carName, driverName, selectedType, thana, phone))
                     }
                 }
             ) {
