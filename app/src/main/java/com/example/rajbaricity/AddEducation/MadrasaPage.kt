@@ -106,11 +106,7 @@ fun MadrasaPage(viewModel: RajbariViewModel = viewModel()) {
                         imageUrl = imageUri?.toString(),
                         type = type
                     )
-                    if (type == "Qawmi") {
-                        viewModel.addQawmiMadrasa(newEntry)
-                    } else {
-                        viewModel.addAliaMadrasa(newEntry)
-                    }
+                    viewModel.addMadrasa(newEntry)
                     showForm = false
                 }
             )
