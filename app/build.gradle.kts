@@ -84,7 +84,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.recyclerview)
     implementation(libs.firebase.firestore.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
     // ✅ Testing
     testImplementation(libs.junit)

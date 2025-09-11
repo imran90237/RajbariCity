@@ -169,7 +169,7 @@ fun DonorInputDialog(onDismiss: () -> Unit, onAddDonor: (BloodDonor) -> Unit) {
         confirmButton = {
             Button(onClick = {
                 if (name.isNotBlank() && bloodGroup.isNotBlank()) {
-                    onAddDonor(BloodDonor(name, bloodGroup, donationDate, address, phone))
+                    onAddDonor(BloodDonor(0, name, bloodGroup, donationDate, address, phone))
                 }
             }) {
                 Text("সংরক্ষণ করুন")
@@ -211,7 +211,7 @@ fun RequestInputDialog(onDismiss: () -> Unit, onAddRequest: (BloodRequest) -> Un
                 if (name.isNotBlank() && bloodGroup.isNotBlank()) {
                     onAddRequest(
                         BloodRequest(
-                            name, bloodGroup, bagCount, dateTime, phone, hospital, details
+                            id = 0, name, bloodGroup, bagCount, dateTime, phone, hospital, details
                         )
                     )
                 }
@@ -239,5 +239,4 @@ fun RequestInputDialog(onDismiss: () -> Unit, onAddRequest: (BloodRequest) -> Un
         shape = RoundedCornerShape(16.dp)
     )
 }
-
 
