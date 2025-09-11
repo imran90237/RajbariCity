@@ -64,4 +64,16 @@ object RetrofitClient {
     val coachingApiService: CoachingApiService by lazy {
         retrofit.create(CoachingApiService::class.java)
     }
+
+    val collegeApiService: CollegeApiService by lazy {
+        retrofit.create(CollegeApiService::class.java)
+    }
+
+    val madrasaApiService: MadrasaApiService by lazy {
+        retrofit.create(MadrasaApiService::class.java)
+    }
+
+    val schoolApiService: SchoolApiService by lazy {
+        retrofit.create(SchoolApiService::class.java)
+    }
 }

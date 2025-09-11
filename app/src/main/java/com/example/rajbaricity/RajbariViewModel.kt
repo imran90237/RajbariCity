@@ -11,7 +11,10 @@ import com.example.rajbaricity.model.BusCounter
 import com.example.rajbaricity.model.Bustime
 import com.example.rajbaricity.model.CarInfo
 import com.example.rajbaricity.model.CoachingInfo
+import com.example.rajbaricity.model.CollegeInfo
 import com.example.rajbaricity.model.LoginRequest
+import com.example.rajbaricity.model.MadrasaInfo
+import com.example.rajbaricity.model.SchoolInfo
 import com.example.rajbaricity.model.Section
 import com.example.rajbaricity.model.User
 import com.example.rajbaricity.model.VerificationRequest
@@ -45,6 +48,18 @@ class RajbariViewModel : ViewModel() {
     private val _coachings = MutableStateFlow<List<CoachingInfo>>(emptyList())
     val coachings: StateFlow<List<CoachingInfo>> = _coachings
 
+    private val _colleges = MutableStateFlow<List<CollegeInfo>>(emptyList())
+    val colleges: StateFlow<List<CollegeInfo>> = _colleges
+
+    private val _qawmiMadrasas = MutableStateFlow<List<MadrasaInfo>>(emptyList())
+    val qawmiMadrasas: StateFlow<List<MadrasaInfo>> = _qawmiMadrasas
+
+    private val _aliaMadrasas = MutableStateFlow<List<MadrasaInfo>>(emptyList())
+    val aliaMadrasas: StateFlow<List<MadrasaInfo>> = _aliaMadrasas
+
+    private val _schools = MutableStateFlow<List<SchoolInfo>>(emptyList())
+    val schools: StateFlow<List<SchoolInfo>> = _schools
+
 
     private val users = mutableStateListOf<User>()
 
@@ -74,7 +89,99 @@ class RajbariViewModel : ViewModel() {
         getBusCounters()
         getBusTimes()
         getCoachings()
+        getColleges()
+        getQawmiMadrasas()
+        getAliaMadrasas()
+        getSchools()
+
     }
+
+    fun getColleges() {
+        viewModelScope.launch {
+            try {
+                _colleges.value = RetrofitClient.collegeApiService.getAll()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching colleges", e)
+            }
+        }
+    }
+
+    fun addCollege(collegeInfo: CollegeInfo) {
+        viewModelScope.launch {
+            try {
+                RetrofitClient.collegeApiService.create(collegeInfo)
+                getColleges() // Refresh the list
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error adding college", e)
+            }
+        }
+    }
+
+    fun getQawmiMadrasas() {
+        viewModelScope.launch {
+            try {
+                _qawmiMadrasas.value = RetrofitClient.madrasaApiService.getQawmi()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching qawmi madrasas", e)
+            }
+        }
+    }
+
+    fun addQawmiMadrasa(madrasaInfo: MadrasaInfo) {
+        viewModelScope.launch {
+            try {
+                RetrofitClient.madrasaApiService.createQawmi(madrasaInfo)
+                getQawmiMadrasas() // Refresh the list
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error adding qawmi madrasa", e)
+            }
+        }
+    }
+
+    fun getAliaMadrasas() {
+        viewModelScope.launch {
+            try {
+                _aliaMadrasas.value = RetrofitClient.madrasaApiService.getAlia()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching alia madrasas", e)
+            }
+        }
+    }
+
+    fun addAliaMadrasa(madrasaInfo: MadrasaInfo) {
+        viewModelScope.launch {
+            try {
+                RetrofitClient.madrasaApiService.createAlia(madrasaInfo)
+                getAliaMadrasas() // Refresh the list
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error adding alia madrasa", e)
+            }
+        }
+    }
+
+    fun getSchools() {
+        viewModelScope.launch {
+            try {
+                _schools.value = RetrofitClient.schoolApiService.getAll()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching schools", e)
+            }
+        }
+    }
+
+    fun addSchool(schoolInfo: SchoolInfo) {
+        viewModelScope.launch {
+            try {
+                RetrofitClient.schoolApiService.create(schoolInfo)
+                getSchools() // Refresh the list
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error adding school", e)
+            }
+        }
+    }
+
+
+
 
     fun getCoachings() {
         viewModelScope.launch {
@@ -443,8 +550,6 @@ class RajbariViewModel : ViewModel() {
 
 
 
-
-
 /*package com.example.rajbaricity
 
 import android.net.Uri
@@ -452,16 +557,7 @@ import android.util.Log
 import androidx.compose.runtime.*
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.rajbaricity.model.BloodDonor
-import com.example.rajbaricity.model.BloodRequest
-import com.example.rajbaricity.model.BusCounter
-import com.example.rajbaricity.model.Bustime
-import com.example.rajbaricity.model.CarInfo
-import com.example.rajbaricity.model.CoachingInfo
-import com.example.rajbaricity.model.LoginRequest
-import com.example.rajbaricity.model.Section
-import com.example.rajbaricity.model.User
-import com.example.rajbaricity.model.VerificationRequest
+import com.example.rajbaricity.model.*
 import com.example.rajbaricity.network.RetrofitClient
 import com.example.rajbaricity.utils.ValidationUtils
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -492,6 +588,18 @@ class RajbariViewModel : ViewModel() {
     private val _coachings = MutableStateFlow<List<CoachingInfo>>(emptyList())
     val coachings: StateFlow<List<CoachingInfo>> = _coachings
 
+    private val _colleges = MutableStateFlow<List<CollegeInfo>>(emptyList())
+    val colleges: StateFlow<List<CollegeInfo>> = _colleges
+
+    private val _qawmiMadrasas = MutableStateFlow<List<MadrasaInfo>>(emptyList())
+    val qawmiMadrasas: StateFlow<List<MadrasaInfo>> = _qawmiMadrasas
+
+    private val _aliaMadrasas = MutableStateFlow<List<MadrasaInfo>>(emptyList())
+    val aliaMadrasas: StateFlow<List<MadrasaInfo>> = _aliaMadrasas
+
+    private val _schools = MutableStateFlow<List<SchoolInfo>>(emptyList())
+    val schools: StateFlow<List<SchoolInfo>> = _schools
+
     private val users = mutableStateListOf<User>()
 
     var loggedInUser by mutableStateOf<User?>(null)
@@ -506,8 +614,6 @@ class RajbariViewModel : ViewModel() {
     val loggedInUserEmail: String?
         get() = loggedInUser?.email
 
-
-
     val loggedInUserImage: String?
         get() = loggedInUser?.profileImageUrl
 
@@ -521,6 +627,10 @@ class RajbariViewModel : ViewModel() {
         getBusTimes()
         getCars()
         getCoachings()
+        getColleges()
+        getQawmiMadrasas()
+        getAliaMadrasas()
+        getSchools()
     }
 
     fun getCoachings() {
@@ -540,6 +650,90 @@ class RajbariViewModel : ViewModel() {
                 getCoachings() // Refresh the list
             } catch (e: Exception) {
                 Log.e("RajbariViewModel", "Error adding coaching", e)
+            }
+        }
+    }
+
+    fun getColleges() {
+        viewModelScope.launch {
+            try {
+                _colleges.value = RetrofitClient.collegeApiService.getAll()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching colleges", e)
+            }
+        }
+    }
+
+    fun addCollege(collegeInfo: CollegeInfo) {
+        viewModelScope.launch {
+            try {
+                RetrofitClient.collegeApiService.create(collegeInfo)
+                getColleges() // Refresh the list
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error adding college", e)
+            }
+        }
+    }
+
+    fun getQawmiMadrasas() {
+        viewModelScope.launch {
+            try {
+                _qawmiMadrasas.value = RetrofitClient.madrasaApiService.getQawmi()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching qawmi madrasas", e)
+            }
+        }
+    }
+
+    fun addQawmiMadrasa(madrasaInfo: MadrasaInfo) {
+        viewModelScope.launch {
+            try {
+                RetrofitClient.madrasaApiService.createQawmi(madrasaInfo)
+                getQawmiMadrasas() // Refresh the list
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error adding qawmi madrasa", e)
+            }
+        }
+    }
+
+    fun getAliaMadrasas() {
+        viewModelScope.launch {
+            try {
+                _aliaMadrasas.value = RetrofitClient.madrasaApiService.getAlia()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching alia madrasas", e)
+            }
+        }
+    }
+
+    fun addAliaMadrasa(madrasaInfo: MadrasaInfo) {
+        viewModelScope.launch {
+            try {
+                RetrofitClient.madrasaApiService.createAlia(madrasaInfo)
+                getAliaMadrasas() // Refresh the list
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error adding alia madrasa", e)
+            }
+        }
+    }
+
+    fun getSchools() {
+        viewModelScope.launch {
+            try {
+                _schools.value = RetrofitClient.schoolApiService.getAll()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching schools", e)
+            }
+        }
+    }
+
+    fun addSchool(schoolInfo: SchoolInfo) {
+        viewModelScope.launch {
+            try {
+                RetrofitClient.schoolApiService.create(schoolInfo)
+                getSchools() // Refresh the list
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error adding school", e)
             }
         }
     }
@@ -595,7 +789,17 @@ class RajbariViewModel : ViewModel() {
             }
 
             override fun onFailure(call: Call<List<BusCounter>>, t: Throwable) {
-                Log.e("RajbariViewModel", "Error fetching bus counters", t)
+                Log.e("RajbariViewModel", "Error fetching bus counters", t)  private val _colleges = MutableStateFlow<List<CollegeInfo>>(emptyList())
+    val colleges: StateFlow<List<CollegeInfo>> = _colleges
+
+    private val _qawmiMadrasas = MutableStateFlow<List<MadrasaInfo>>(emptyList())
+    val qawmiMadrasas: StateFlow<List<MadrasaInfo>> = _qawmiMadrasas
+
+    private val _aliaMadrasas = MutableStateFlow<List<MadrasaInfo>>(emptyList())
+    val aliaMadrasas: StateFlow<List<MadrasaInfo>> = _aliaMadrasas
+
+    private val _schools = MutableStateFlow<List<SchoolInfo>>(emptyList())
+    val schools: StateFlow<List<SchoolInfo>> = _schools
             }
         })
     }

@@ -9,6 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -23,59 +24,38 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.rajbaricity.R
-
-// Data model for Madrasa
-data class MadrasaInfo(
-    val imageUri: Uri? = null,
-    val imageRes: Int = R.drawable.madrasa1,
-    val name: String,
-    val established: String,
-    val features: String,
-    val mapUrl: String
-)
+import com.example.rajbaricity.model.MadrasaInfo
+import com.example.rajbaricity.ui.RajbariViewModel
 
 @Composable
-fun MadrasaPage() {
+fun MadrasaPage(viewModel: RajbariViewModel = viewModel()) {
     var showForm by remember { mutableStateOf(false) }
     var selectedTab by remember { mutableStateOf(0) }
 
-    val qawmiList = remember {
-        mutableStateListOf(
-            MadrasaInfo(
-                imageRes = R.drawable.madrasa,
-                name = "ভাজনচালা হাফিজিয়া কওমিয়া মাদ্রাসা",
-                established = "স্থাপিত: ১৯৮৫",
-                features = "ঠিকানা: রাজবাড়ী সদর, ফোন: ০১৭xxxxxxxx, থানা: রাজবাড়ী সদর",
-                mapUrl = "https://maps.app.goo.gl/exampleQawmi"
-            )
-        )
-    }
-
-    val aliaList = remember {
-        mutableStateListOf(
-            MadrasaInfo(
-                imageRes = R.drawable.vandaria,
-                name = "ভান্ডারিয়া সিদ্দিকিয়া কামিল মাদ্রাসা",
-                established = "স্থাপিত: ১৯৫৫",
-                features = "ঠিকানা: খানখানাপুর, রাজবাড়ী, ফোন: ০১৮xxxxxxxx, থানা: রাজবাড়ী সদর",
-                mapUrl = "https://maps.app.goo.gl/exampleAlia"
-            )
-        )
-    }
-
+    val qawmiList by viewModel.qawmiMadrasas.collectAsState()
+    val aliaList by viewModel.aliaMadrasas.collectAsState()
 
     val madrasaList = if (selectedTab == 0) qawmiList else aliaList
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
 
             TabRow(selectedTabIndex = selectedTab) {
-                Tab(selected = selectedTab == 0, onClick = { selectedTab = 0 }, text = { Text("কওমি মাদ্রাসা") })
-                Tab(selected = selectedTab == 1, onClick = { selectedTab = 1 }, text = { Text("আলিয়া মাদ্রাসা") })
+                Tab(
+                    selected = selectedTab == 0,
+                    onClick = { selectedTab = 0 },
+                    text = { Text("কওমি মাদ্রাসা") })
+                Tab(
+                    selected = selectedTab == 1,
+                    onClick = { selectedTab = 1 },
+                    text = { Text("আলিয়া মাদ্রাসা") })
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -90,11 +70,9 @@ fun MadrasaPage() {
             )
 
             LazyColumn(modifier = Modifier.weight(1f)) {
-                items(madrasaList.size) { index ->
-                    val madrasa = madrasaList[index]
+                items(madrasaList) { madrasa ->
                     MadrasaItem(
-                        imageUri = madrasa.imageUri,
-                        imageRes = madrasa.imageRes,
+                        imageUrl = madrasa.imageUrl,
                         name = madrasa.name,
                         established = madrasa.established,
                         features = madrasa.features,
@@ -118,14 +96,21 @@ fun MadrasaPage() {
             AddMadrasaFormScreen(
                 onCancel = { showForm = false },
                 onSubmit = { name, year, thana, address, phone, mapUrl, imageUri ->
+                    val type = if (selectedTab == 0) "Qawmi" else "Alia"
                     val newEntry = MadrasaInfo(
-                        imageUri = imageUri,
+                        id = 0,
                         name = name,
                         established = "স্থাপিত: $year",
                         features = "ঠিকানা: $address, ফোন: $phone, থানা: $thana",
-                        mapUrl = mapUrl
+                        mapUrl = mapUrl,
+                        imageUrl = imageUri?.toString(),
+                        type = type
                     )
-                    if (selectedTab == 0) qawmiList.add(newEntry) else aliaList.add(newEntry)
+                    if (type == "Qawmi") {
+                        viewModel.addQawmiMadrasa(newEntry)
+                    } else {
+                        viewModel.addAliaMadrasa(newEntry)
+                    }
                     showForm = false
                 }
             )
@@ -135,8 +120,7 @@ fun MadrasaPage() {
 
 @Composable
 fun MadrasaItem(
-    imageUri: Uri?,
-    imageRes: Int,
+    imageUrl: String?,
     name: String,
     established: String,
     features: String,
@@ -152,14 +136,11 @@ fun MadrasaItem(
         shape = RoundedCornerShape(12.dp)
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
-            val painter = if (imageUri != null) {
-                rememberAsyncImagePainter(model = imageUri)
-            } else {
-                painterResource(id = imageRes)
-            }
-
             Image(
-                painter = painter,
+                painter = rememberAsyncImagePainter(
+                    model = imageUrl,
+                    error = painterResource(id = R.drawable.madrasa1)
+                ),
                 contentDescription = name,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -199,9 +180,10 @@ fun AddMadrasaFormScreen(
     var mapUrl by remember { mutableStateOf("") }
     var imageUri by remember { mutableStateOf<Uri?>(null) }
 
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        imageUri = uri
-    }
+    val launcher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            imageUri = uri
+        }
 
     Surface(
         modifier = Modifier
@@ -209,11 +191,17 @@ fun AddMadrasaFormScreen(
             .background(Color.White.copy(alpha = 0.95f)),
         color = Color.Transparent
     ) {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+        ) {
 
-            Text("📝 নতুন মাদ্রাসা যুক্ত করুন", fontSize = 20.sp, modifier = Modifier.padding(bottom = 16.dp))
+            Text(
+                "📝 নতুন মাদ্রাসা যুক্ত করুন",
+                fontSize = 20.sp,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
 
             Button(onClick = { launcher.launch("image/*") }) {
                 Text("📷 ছবি নির্বাচন করুন")
@@ -231,16 +219,49 @@ fun AddMadrasaFormScreen(
                 )
             }
 
-            OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("প্রতিষ্ঠানের নাম") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = year, onValueChange = { year = it }, label = { Text("স্থাপনের সাল") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = thana, onValueChange = { thana = it }, label = { Text("থানা/উপজেলা") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = address, onValueChange = { address = it }, label = { Text("পূর্ণ ঠিকানা") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = phone, onValueChange = { phone = it }, label = { Text("ফোন নম্বর") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = mapUrl, onValueChange = { mapUrl = it }, label = { Text("গুগল ম্যাপ লিংক") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(
+                value = name,
+                onValueChange = { name = it },
+                label = { Text("প্রতিষ্ঠানের নাম") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = year,
+                onValueChange = { year = it },
+                label = { Text("স্থাপনের সাল") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = thana,
+                onValueChange = { thana = it },
+                label = { Text("থানা/উপজেলা") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = address,
+                onValueChange = { address = it },
+                label = { Text("পূর্ণ ঠিকানা") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = phone,
+                onValueChange = { phone = it },
+                label = { Text("ফোন নম্বর") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = mapUrl,
+                onValueChange = { mapUrl = it },
+                label = { Text("গুগল ম্যাপ লিংক") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 OutlinedButton(onClick = onCancel) {
                     Text("❌ বাতিল")
                 }
