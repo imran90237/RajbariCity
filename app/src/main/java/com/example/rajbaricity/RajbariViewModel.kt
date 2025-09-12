@@ -48,6 +48,9 @@ class RajbariViewModel : ViewModel() {
     private val _schools = MutableStateFlow<List<SchoolInfo>>(emptyList())
     val schools: StateFlow<List<SchoolInfo>> = _schools
 
+    private val _students = MutableStateFlow<List<Student>>(emptyList())
+    val students: StateFlow<List<Student>> = _students
+
     private val users = mutableStateListOf<User>()
 
     var loggedInUser by mutableStateOf<User?>(null)
@@ -78,6 +81,39 @@ class RajbariViewModel : ViewModel() {
         getColleges()
         getMadrasas()
         getSchools()
+        getStudents()
+    }
+
+    fun getStudents() {
+        viewModelScope.launch {
+            try {
+                _students.value = RetrofitClient.studentApiService.getAllStudents()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching students", e)
+            }
+        }
+    }
+
+    fun addStudent(student: Student) {
+        viewModelScope.launch {
+            try {
+                RetrofitClient.studentApiService.createStudent(student)
+                getStudents() // Refresh the list
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error adding student", e)
+            }
+        }
+    }
+
+    fun likeStudent(id: Long) {
+        viewModelScope.launch {
+            try {
+                RetrofitClient.studentApiService.likeStudent(id)
+                getStudents() // Refresh the list to show updated like count
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error liking student", e)
+            }
+        }
     }
 
     fun getCoachings() {
@@ -125,9 +161,18 @@ class RajbariViewModel : ViewModel() {
     fun getMadrasas() {
         viewModelScope.launch {
             try {
-                val allMadrasas = RetrofitClient.madrasaApiService.getAll()
-                _qawmiMadrasas.value = allMadrasas.filter { it.type == "Qawmi" }
-                _aliaMadrasas.value = allMadrasas.filter { it.type == "Alia" }
+                val response = RetrofitClient.madrasaApiService.getAll()
+                if (response.isSuccessful) {
+                    val allMadrasas = response.body() ?: emptyList()
+                    Log.d("RajbariViewModel", "Madrasas fetched successfully: ${allMadrasas.size} madrasas")
+                    allMadrasas.forEach { madrasa ->
+                        Log.d("RajbariViewModel", "Madrasa: ${madrasa.name}, Type: ${madrasa.type}")
+                    }
+                    _qawmiMadrasas.value = allMadrasas.filter { it.type?.trim().equals("Qawmi", ignoreCase = true) }
+                    _aliaMadrasas.value = allMadrasas.filter { it.type?.trim().equals("Alia", ignoreCase = true) }
+                } else {
+                    Log.e("RajbariViewModel", "Failed to fetch madrasas. Code: ${response.code()}, Message: ${response.message()}")
+                }
             } catch (e: Exception) {
                 Log.e("RajbariViewModel", "Error fetching madrasas", e)
             }
@@ -137,8 +182,13 @@ class RajbariViewModel : ViewModel() {
     fun addMadrasa(madrasaInfo: MadrasaInfo) {
         viewModelScope.launch {
             try {
-                RetrofitClient.madrasaApiService.create(madrasaInfo)
-                getMadrasas() // Refresh both lists
+                val response = RetrofitClient.madrasaApiService.create(madrasaInfo)
+                if (response.isSuccessful) {
+                    Log.d("RajbariViewModel", "Madrasa added successfully: ${response.body()}")
+                    getMadrasas() // Refresh both lists
+                } else {
+                    Log.e("RajbariViewModel", "Failed to add madrasa. Code: ${response.code()}, Message: ${response.message()}")
+                }
             } catch (e: Exception) {
                 Log.e("RajbariViewModel", "Error adding madrasa", e)
             }

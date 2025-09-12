@@ -1,7 +1,7 @@
 package com.example.rajbaricity.model
 
 data class MadrasaInfo(
-    val id: Long = 0,
+    val id: Long? = null,
     val name: String,
     val established: String,
     val features: String,

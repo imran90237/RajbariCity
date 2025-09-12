@@ -17,52 +17,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.rajbaricity.R
-
-data class StudentRequest(
-    val name: String,
-    val title: String,
-    val subject: String,
-    val days: String,
-    val salary: String,
-    val gender: String,
-    val thana: String,
-    val address: String,
-    val phone: String,
-    val imageUri: Uri? = null,
-    val imageRes: Int = R.drawable.student,
-    var likes: Int = 0
-)
+import com.example.rajbaricity.model.Student
+import com.example.rajbaricity.ui.RajbariViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WantToStudyPage() {
-    val studentList = remember {
-        mutableStateListOf(
-            StudentRequest(
-                name = "রাফি ইসলাম ডেমো শিক্ষার্থী",
-                title = "বিজ্ঞান বিষয়ে অনার্স পড়া মুসলিম ছাত্র\n",
-                subject = "গণিত ও ইংরেজি",
-                days = "৩ দিন",
-                salary = "৩০০০ টাকা",
-                gender = "পুরুষ",
-                thana = "রাজবাড়ী সদর",
-                address = "মুরালিপাড়া, রাজবাড়ী",
-                phone = "০১৭xxxxxxxx",
-                imageRes = R.drawable.student,
-                likes = 2
-            )
-        )
-    }
-
-    var searchText by remember { mutableStateOf("") }
+fun WantToStudyPage(viewModel: RajbariViewModel = viewModel()) {
+    val studentList by viewModel.students.collectAsState()
     var showForm by remember { mutableStateOf(false) }
+    var searchText by remember { mutableStateOf("") }
 
     val filteredList = studentList.filter {
         it.name.contains(searchText, ignoreCase = true) ||
@@ -75,7 +45,7 @@ fun WantToStudyPage() {
             .fillMaxSize()
             .padding(16.dp)) {
 
-            Text("📚 পড়তে চাই/শিক্ষক চাই\n", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text("📚 পড়তে চাই/শিক্ষক চাই\n", fontSize = 20.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
@@ -88,9 +58,9 @@ fun WantToStudyPage() {
             Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn(modifier = Modifier.weight(1f)) {
-                items(filteredList) { student ->
-                    StudentCard(student) {
-                        student.likes++
+                items(filteredList) {
+                    StudentCard(it) {
+                        viewModel.likeStudent(it.id)
                     }
                 }
             }
@@ -109,20 +79,19 @@ fun WantToStudyPage() {
             StudentRequestForm(
                 onCancel = { showForm = false },
                 onSubmit = { name, title, subject, days, salary, gender, thana, address, phone, imageUri ->
-                    studentList.add(
-                        StudentRequest(
-                            name = name,
-                            title = title,
-                            subject = subject,
-                            days = days,
-                            salary = salary,
-                            gender = gender,
-                            thana = thana,
-                            address = address,
-                            phone = phone,
-                            imageUri = imageUri
-                        )
+                    val newStudent = Student(
+                        name = name,
+                        title = title,
+                        subject = subject,
+                        days = days,
+                        salary = salary,
+                        gender = gender,
+                        thana = thana,
+                        address = address,
+                        phone = phone,
+                        imageUrl = imageUri?.toString() // Passing imageUri as string
                     )
+                    viewModel.addStudent(newStudent)
                     showForm = false
                 }
             )
@@ -131,7 +100,7 @@ fun WantToStudyPage() {
 }
 
 @Composable
-fun StudentCard(student: StudentRequest, onLike: () -> Unit) {
+fun StudentCard(student: Student, onLike: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -143,10 +112,10 @@ fun StudentCard(student: StudentRequest, onLike: () -> Unit) {
             .fillMaxWidth()
             .padding(12.dp)) {
 
-            val painter = if (student.imageUri != null) {
-                rememberAsyncImagePainter(model = student.imageUri)
+            val painter = if (student.imageUrl != null) {
+                rememberAsyncImagePainter(model = student.imageUrl)
             } else {
-                painterResource(id = student.imageRes)
+                painterResource(id = R.drawable.student)
             }
 
             Image(
