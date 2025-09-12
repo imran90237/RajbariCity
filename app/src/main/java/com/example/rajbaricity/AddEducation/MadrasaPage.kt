@@ -38,7 +38,11 @@ fun MadrasaPage(viewModel: RajbariViewModel = viewModel()) {
     val qawmiList by viewModel.qawmiMadrasas.collectAsState()
     val aliaList by viewModel.aliaMadrasas.collectAsState()
 
-    val madrasaList = if (selectedTab == 0) qawmiList else aliaList
+    val madrasaList by remember(qawmiList, aliaList, selectedTab) {
+        derivedStateOf {
+            if (selectedTab == 0) qawmiList else aliaList
+        }
+    }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -60,24 +64,39 @@ fun MadrasaPage(viewModel: RajbariViewModel = viewModel()) {
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            OutlinedTextField(
-                value = "",
-                onValueChange = {},
-                label = { Text("🔍 মাদ্রাসা খুঁজুন") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp)
+            // --- DEBUGGING TEXT ---
+            Text(
+                text = "Qawmi: ${qawmiList.size}, Alia: ${aliaList.size}, Displayed: ${madrasaList.size}",
+                style = MaterialTheme.typography.bodySmall,
+                color = Color.Red
             )
+            // --- END DEBUGGING TEXT ---
 
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                items(madrasaList) { madrasa ->
-                    MadrasaItem(
-                        imageUrl = madrasa.imageUrl,
-                        name = madrasa.name,
-                        established = madrasa.established,
-                        features = madrasa.features,
-                        mapUrl = madrasa.mapUrl
+            if (madrasaList.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        "এই বিভাগে কোনো মাদ্রাসা খুঁজে পাওয়া যায়নি।",
+                        fontSize = 18.sp,
+                        color = Color.Gray
                     )
+                }
+            } else {
+                LazyColumn(modifier = Modifier.weight(1f)) {
+                    items(
+                        items = madrasaList,
+                        key = { madrasa -> madrasa.id ?: (madrasa.name + madrasa.established) }
+                    ) { madrasa ->
+                        MadrasaItem(
+                            imageUrl = madrasa.imageUrl,
+                            name = madrasa.name,
+                            established = madrasa.established,
+                            features = madrasa.features,
+                            mapUrl = madrasa.mapUrl
+                        )
+                    }
                 }
             }
         }
@@ -98,7 +117,7 @@ fun MadrasaPage(viewModel: RajbariViewModel = viewModel()) {
                 onSubmit = { name, year, thana, address, phone, mapUrl, imageUri ->
                     val type = if (selectedTab == 0) "Qawmi" else "Alia"
                     val newEntry = MadrasaInfo(
-                        id = 0,
+                        id = null,
                         name = name,
                         established = "স্থাপিত: $year",
                         features = "ঠিকানা: $address, ফোন: $phone, থানা: $thana",
