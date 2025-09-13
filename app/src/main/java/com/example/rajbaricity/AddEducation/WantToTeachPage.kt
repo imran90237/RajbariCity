@@ -60,7 +60,9 @@ fun WantToTeachPage(viewModel: RajbariViewModel = viewModel()) {
 
             LazyColumn(modifier = Modifier.weight(1f)) {
                 items(filteredList) {
-                    TeacherCard(it) { viewModel.likeTeacher(it.id) }
+                    TeacherCard(it) {
+                        it.id?.let { id -> viewModel.likeTeacher(id) }
+                    }
                 }
             }
         }
