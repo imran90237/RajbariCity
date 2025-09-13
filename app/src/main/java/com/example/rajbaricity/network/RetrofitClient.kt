@@ -80,5 +80,9 @@ object RetrofitClient {
     val studentApiService: StudentApiService by lazy {
         retrofit.create(StudentApiService::class.java)
     }
+
+    val teacherApiService: TeacherApiService by lazy {
+        retrofit.create(TeacherApiService::class.java)
+    }
 }
 

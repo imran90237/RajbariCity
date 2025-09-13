@@ -51,25 +51,28 @@ class RajbariViewModel : ViewModel() {
     private val _students = MutableStateFlow<List<Student>>(emptyList())
     val students: StateFlow<List<Student>> = _students
 
+    private val _teachers = MutableStateFlow<List<Teacher>>(emptyList())
+    val teachers: StateFlow<List<Teacher>> = _teachers
+
     private val users = mutableStateListOf<User>()
 
-    var loggedInUser by mutableStateOf<User?>(null)
-        private set
+    private val _loggedInUser = MutableStateFlow<User?>(null)
+    val loggedInUser: StateFlow<User?> = _loggedInUser
 
     val isRegistered: Boolean
         get() = users.isNotEmpty()
 
     val loggedInUserName: String?
-        get() = loggedInUser?.username
+        get() = loggedInUser.value?.username
 
     val loggedInUserEmail: String?
-        get() = loggedInUser?.email
+        get() = loggedInUser.value?.email
 
     val loggedInUserImage: String?
-        get() = loggedInUser?.profileImageUrl
+        get() = loggedInUser.value?.profileImageUrl
 
     val loggedInUserImageUri: Uri?
-        get() = loggedInUser?.profileImageUrl?.let { Uri.parse(it) }
+        get() = loggedInUser.value?.profileImageUrl?.let { Uri.parse(it) }
 
     init {
         getDonors()
@@ -82,7 +85,52 @@ class RajbariViewModel : ViewModel() {
         getMadrasas()
         getSchools()
         getStudents()
+        getTeachers()
     }
+    fun getTeachers() {
+        viewModelScope.launch {
+            try {
+                _teachers.value = RetrofitClient.teacherApiService.getAllTeachers()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching teachers", e)
+            }
+        }
+    }
+
+    fun addTeacher(teacher: Teacher) {
+        viewModelScope.launch {
+            try {
+                RetrofitClient.teacherApiService.createTeacher(teacher)
+                getTeachers() // Refresh the list
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error adding teacher", e)
+            }
+        }
+    }
+
+    fun likeTeacher(id: Long) {
+        viewModelScope.launch {
+            try {
+                RetrofitClient.teacherApiService.likeTeacher(id)
+                getTeachers() // Refresh the list to show updated like count
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error liking teacher", e)
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     fun getStudents() {
         viewModelScope.launch {
@@ -478,7 +526,7 @@ class RajbariViewModel : ViewModel() {
                 val loginRequest = LoginRequest(email, password)
                 val response = RetrofitClient.apiService.login(loginRequest)
                 if (response.isSuccessful) {
-                    loggedInUser = response.body()
+                    _loggedInUser.value = response.body()
                     onResult(true, null)
                 } else {
                     val errorBody = response.errorBody()?.string()
@@ -500,7 +548,7 @@ class RajbariViewModel : ViewModel() {
         }
 
         return if (matchedUser != null) {
-            loggedInUser = matchedUser
+            _loggedInUser.value = matchedUser
             true
         } else {
             false
@@ -508,11 +556,11 @@ class RajbariViewModel : ViewModel() {
     }
 
     fun logout() {
-        loggedInUser = null
+        _loggedInUser.value = null
     }
 
     fun updateUserProfile(newUsername: String, newEmail: String) {
-        loggedInUser = loggedInUser?.copy(
+        _loggedInUser.value = _loggedInUser.value?.copy(
             username = newUsername,
             email = newEmail
         )

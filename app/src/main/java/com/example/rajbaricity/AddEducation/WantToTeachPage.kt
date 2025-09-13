@@ -21,45 +21,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
 import com.example.rajbaricity.R
-
-data class TeacherRequest(
-    val name: String,
-    val title: String,
-    val subject: String,
-    val days: String,
-    val salary: String,
-    val gender: String,
-    val thana: String,
-    val address: String,
-    val phone: String,
-    val imageUri: Uri? = null,
-    val imageRes: Int = R.drawable.teacher,
-    var likes: Int = 0
-)
+import com.example.rajbaricity.model.Teacher
+import com.example.rajbaricity.ui.RajbariViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WantToTeachPage() {
-    val teacherList = remember {
-        mutableStateListOf(
-            TeacherRequest(
-                name = "সুমি আক্তার ডেমো শিক্ষিকা",
-                title = "দক্ষতার সাথে পড়ানো অভিজ্ঞতা রয়েছে\n",
-                subject = "বাংলা ও ইংরেজি",
-                days = "৫ দিন",
-                salary = "৫০০০ টাকা",
-                gender = "মহিলা",
-                thana = "রাজবাড়ী সদর",
-                address = "মুরালিপাড়া, রাজবাড়ী",
-                phone = "০১৭xxxxxxxx",
-                imageRes = R.drawable.teacher,
-                likes = 3
-            )
-        )
-    }
-
+fun WantToTeachPage(viewModel: RajbariViewModel = viewModel()) {
+    val teacherList by viewModel.teachers.collectAsState()
     var showForm by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
 
@@ -88,8 +59,8 @@ fun WantToTeachPage() {
             Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn(modifier = Modifier.weight(1f)) {
-                items(filteredList) { teacher ->
-                    TeacherCard(teacher) { teacher.likes++ }
+                items(filteredList) {
+                    TeacherCard(it) { viewModel.likeTeacher(it.id) }
                 }
             }
         }
@@ -107,11 +78,19 @@ fun WantToTeachPage() {
             TeacherRequestForm(
                 onCancel = { showForm = false },
                 onSubmit = { name, title, subject, days, salary, gender, thana, address, phone, imageUri ->
-                    teacherList.add(
-                        TeacherRequest(
-                            name, title, subject, days, salary, gender, thana, address, phone, imageUri
-                        )
+                    val newTeacher = Teacher(
+                        name = name,
+                        title = title,
+                        subject = subject,
+                        days = days,
+                        salary = salary,
+                        gender = gender,
+                        thana = thana,
+                        address = address,
+                        phone = phone,
+                        imageUrl = imageUri?.toString()
                     )
+                    viewModel.addTeacher(newTeacher)
                     showForm = false
                 }
             )
@@ -120,7 +99,7 @@ fun WantToTeachPage() {
 }
 
 @Composable
-fun TeacherCard(teacher: TeacherRequest, onLike: () -> Unit) {
+fun TeacherCard(teacher: Teacher, onLike: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -129,10 +108,10 @@ fun TeacherCard(teacher: TeacherRequest, onLike: () -> Unit) {
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Row(modifier = Modifier.padding(12.dp)) {
-            val painter = if (teacher.imageUri != null)
-                rememberAsyncImagePainter(model = teacher.imageUri)
+            val painter = if (teacher.imageUrl != null)
+                rememberAsyncImagePainter(model = teacher.imageUrl)
             else
-                painterResource(id = teacher.imageRes)
+                painterResource(id = R.drawable.teacher)
 
             Image(
                 painter = painter,
