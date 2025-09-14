@@ -63,6 +63,9 @@ class RajbariViewModel : ViewModel() {
     private val _nurseries = MutableStateFlow<List<Nursery>>(emptyList())
     val nurseries: StateFlow<List<Nursery>> = _nurseries
 
+    private val _hotelRestaurants = MutableStateFlow<List<HotelRestaurant>>(emptyList())
+    val hotelRestaurants: StateFlow<List<HotelRestaurant>> = _hotelRestaurants
+
     private val users = mutableStateListOf<User>()
 
     private val _loggedInUser = MutableStateFlow<User?>(null)
@@ -98,6 +101,7 @@ class RajbariViewModel : ViewModel() {
         getHospitals()
         getMistries()
         getNurseries()
+        getHotelRestaurants()
     }
     fun getTeachers() {
         viewModelScope.launch {
@@ -205,6 +209,27 @@ class RajbariViewModel : ViewModel() {
                 getNurseries() // Refresh the list
             } catch (e: Exception) {
                 Log.e("RajbariViewModel", "Error adding nursery", e)
+            }
+        }
+    }
+
+    fun getHotelRestaurants() {
+        viewModelScope.launch {
+            try {
+                _hotelRestaurants.value = RetrofitClient.hotelRestaurantApiService.getAllHotels()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching hotels", e)
+            }
+        }
+    }
+
+    fun addHotelRestaurant(hotelRestaurant: HotelRestaurant) {
+        viewModelScope.launch {
+            try {
+                RetrofitClient.hotelRestaurantApiService.createHotel(hotelRestaurant)
+                getHotelRestaurants() // Refresh the list
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error adding hotel", e)
             }
         }
     }

@@ -107,4 +107,8 @@ object RetrofitClient {
     val nurseryApiService: NurseryApiService by lazy {
         retrofit.create(NurseryApiService::class.java)
     }
+
+    val hotelRestaurantApiService: HotelRestaurantApiService by lazy {
+        retrofit.create(HotelRestaurantApiService::class.java)
+    }
 }
