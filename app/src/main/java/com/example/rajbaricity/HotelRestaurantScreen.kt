@@ -1,57 +1,69 @@
 package com.example.rajbaricity
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-// হোটেল/রেস্টুরেন্টের তথ্যের ডেটা ক্লাস
-data class HotelRestaurant(
-    val name: String,
-    val menu: String,
-    val address: String,
-    val phone: String
-)
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import com.example.rajbaricity.model.HotelRestaurant
+import com.example.rajbaricity.ui.RajbariViewModel
 
 @Composable
-fun HotelRestaurantScreen(onHomeClick: () -> Unit = {}) {
-    var hotelList by remember {
-        mutableStateOf(
-            listOf(
-                HotelRestaurant("হোটেল নাজমা", "", "রাজবাড়ী সদর, রাজবাড়ী", "০১৭২৪৬৫১২৩৪"),
-                HotelRestaurant("হোটেল লতিফ আবাসিক", "", "পাংশা, রাজবাড়ী", "০১৭৬৮৩৬৪৩৫৮"),
-                HotelRestaurant("হোটেল গোল্ডেন", "", "রাজবাড়ী সদর, রাজবাড়ী", "০১৭১৫১৩২৬৭৪"),
-                HotelRestaurant("হোটেল সেভেনটি ওয়ান আবাসিক এন্ড রিসোর্ট", "", "রাজবাড়ী সদর, রাজবাড়ী", "০১৭৬৩৭৭৩৮৭১"),
-                HotelRestaurant("পালকি রেস্টুরেন্ট এন্ড রেস্তোরাঁ", "", "রাজবাড়ী সদর, রাজবাড়ী", "০১৮৭২১৭৩৪৮২"),
-                HotelRestaurant("নিরালা হোটেল", "মোঃ জলিল ফকির", "", ""),
-                HotelRestaurant("মোঃ মোহন ফকির হোটেল", "মোঃ মোহন ফকির", "দৌলতদিয়া স্টেশন বাজার, গোয়ালন্দ", ""),
-                HotelRestaurant("গোয়ালন্দ ডাকবাংলো", "জেলা পরিষদ, রাজবাড়ী", "গোয়ালন্দ, রাজবাড়ী", "০৬৪২৩-৫৬১০৩"),
-                HotelRestaurant("বালিয়াকান্দি ডাক বাংলো", "জেলা পরিষদ, রাজবাড়ী", "বালিয়াকান্দি, রাজবাড়ী", "০৬৪২২-৫৬০০১"),
-                HotelRestaurant("হোটেল লতিফ আবাসিক", "খান মোঃ আব্দুল হাই", "টেশনরোড, পাংশা", "০১৭১৬৯৯১১০৬"),
-                HotelRestaurant("পাংশা ডাকবাংলো", "জেলা পরিষদ, রাজবাড়ী", "পাংশা, রাজবাড়ী", "০৬৪২৪-৭৫০৩৫"),
-                HotelRestaurant("রাজবাড়ী বোডিং", "রতন পোদ্দার", "সাং-কলেজপাড়া, বিনোদপুর, রাজবাড়ী", "০১১৯১৫৭১৭৪৩"),
-                HotelRestaurant("মিড টাউন হোটেল", "মোঃ নুরুজ্জামান", "সাং-বেড়াডাঙ্গা, রাজবাড়ী পৌরসভা", "০১১৯০৬৯০৩০১"),
-                HotelRestaurant("প্রাইম হোটেল", "মোঃ ছিদ্দিকুর রহমান", "সাং-বেড়াডাঙ্গা, রাজবাড়ী পৌরসভা", "০১৯১৩৯৫৯২২২"),
-                HotelRestaurant("গুলশান বোডিং", "আঃ কাদের প্রামানিক", "সাং-সজ্জনকান্দা, রাজবাড়ী পৌরসভা", "০১৯২৩১৯৩১৩৮"),
-                HotelRestaurant("হোটেল পার্ক ৩য় তলা আবাসিক", "সাবিত্রি রাণী চক্রবর্ত্তী", "সজ্জনকান্দা, রাজবাড়ী পৌরসভা", "০৬৪১-৬৬১১১")
-            )
-        )
+fun HotelRestaurantScreen(viewModel: RajbariViewModel = viewModel()) {
+    LaunchedEffect(Unit) {
+        viewModel.getHotelRestaurants()
     }
 
     var showForm by remember { mutableStateOf(false) }
-    var name by remember { mutableStateOf("") }
-    var menu by remember { mutableStateOf("") }
-    var address by remember { mutableStateOf("") }
-    var phone by remember { mutableStateOf("") }
+    val newHotelRestaurants by viewModel.hotelRestaurants.collectAsState()
+    var searchQuery by remember { mutableStateOf("") }
+
+    val staticHotelList = remember {
+        listOf(
+            HotelRestaurant(name = "হোটেল নাজমা", menu = "", address = "রাজবাড়ী সদর, রাজবাড়ী", phone = "০১৭২৪৬৫১২৩৪"),
+            HotelRestaurant(name = "হোটেল লতিফ আবাসিক", menu = "", address = "পাংশা, রাজবাড়ী", phone = "০১৭৬৮৩৬৪৩৫৮"),
+            HotelRestaurant(name = "হোটেল গোল্ডেন", menu = "", address = "রাজবাড়ী সদর, রাজবাড়ী", phone = "০১৭১৫১৩২৬৭৪"),
+            HotelRestaurant(name = "হোটেল সেভেনটি ওয়ান আবাসিক এন্ড রিসোর্ট", menu = "", address = "রাজবাড়ী সদর, রাজবাড়ী", phone = "০১৭৬৩৭৭৩৮৭১"),
+            HotelRestaurant(name = "পালকি রেস্টুরেন্ট এন্ড রেস্তোরাঁ", menu = "", address = "রাজবাড়ী সদর, রাজবাড়ী", phone = "০১৮৭২১৭৩৪৮২"),
+            HotelRestaurant(name = "নিরালা হোটেল", menu = "মোঃ জলিল ফকির", address = "", phone = ""),
+            HotelRestaurant(name = "মোঃ মোহন ফকির হোটেল", menu = "মোঃ মোহন ফকির", address = "দৌলতদিয়া স্টেশন বাজার, গোয়ালন্দ", phone = ""),
+            HotelRestaurant(name = "গোয়ালন্দ ডাকবাংলো", menu = "জেলা পরিষদ, রাজবাড়ী", address = "গোয়ালন্দ, রাজবাড়ী", phone = "০৬৪২৩-৫৬১০৩"),
+            HotelRestaurant(name = "বালিয়াকান্দি ডাক বাংলো", menu = "জেলা পরিষদ, রাজবাড়ী", address = "বালিয়াকান্দি, রাজবাড়ী", phone = "০৬৪২২-৫৬০০১"),
+            HotelRestaurant(name = "হোটেল লতিফ আবাসিক", menu = "খান মোঃ আব্দুল হাই", address = "টেশনরোড, পাংশা", phone = "০১৭১৬৯৯১১০৬"),
+            HotelRestaurant(name = "পাংশা ডাকবাংলো", menu = "জেলা পরিষদ, রাজবাড়ী", address = "পাংশা, রাজবাড়ী", phone = "০৬৪২৪-৭৫০৩৫"),
+            HotelRestaurant(name = "রাজবাড়ী বোডিং", menu = "রতন পোদ্দার", address = "সাং-কলেজপাড়া, বিনোদপুর, রাজবাড়ী", phone = "০১১৯১৫৭১৭৪৩"),
+            HotelRestaurant(name = "মিড টাউন হোটেল", menu = "মোঃ নুরুজ্জামান", address = "সাং-বেড়াডাঙ্গা, রাজবাড়ী পৌরসভা", phone = "০১১৯০৬৯০৩০১"),
+            HotelRestaurant(name = "প্রাইম হোটেল", menu = "মোঃ ছিদ্দিকুর রহমান", address = "সাং-বেড়াডাঙ্গা, রাজবাড়ী পৌরসভা", phone = "০১৯১৩৯৫৯২২২"),
+            HotelRestaurant(name = "গুলশান বোডিং", menu = "আঃ কাদের প্রামানিক", address = "সাং-সজ্জনকান্দা, রাজবাড়ী পৌরসভা", phone = "০১৯২৩১৯৩১৩৮"),
+            HotelRestaurant(name = "হোটেল পার্ক ৩য় তলা আবাসিক", menu = "সাবিত্রি রাণী চক্রবর্ত্তী", address = "সজ্জনকান্দা, রাজবাড়ী পৌরসভা", phone = "০৬৪১-৬৬১১১")
+        )
+    }
+
+    val combinedList = staticHotelList + newHotelRestaurants
 
     Scaffold(
         floatingActionButton = {
@@ -68,109 +80,146 @@ fun HotelRestaurantScreen(onHomeClick: () -> Unit = {}) {
             Text(
                 text = "হোটেল ও রেস্টুরেন্ট তালিকা",
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("হোটেলের নাম দিয়ে খুঁজুন") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            )
 
             LazyColumn(modifier = Modifier.weight(1f)) {
-                items(hotelList) { hotel ->
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 6.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF0F0F0))
-                    ) {
-                        Column(modifier = Modifier.padding(12.dp)) {
-                            Text("নাম: ${hotel.name}", fontWeight = FontWeight.Bold)
-                            if (hotel.menu.isNotBlank()) Text("মালিক: ${hotel.menu}")
-                            if (hotel.address.isNotBlank()) Text("ঠিকানা: ${hotel.address}")
-                            if (hotel.phone.isNotBlank()) Text("ফোন: ${hotel.phone}")
-                        }
-                    }
+                val filteredList = combinedList.filter {
+                    it.name.contains(searchQuery, ignoreCase = true)
                 }
-            }
-
-            if (showForm) {
-                Spacer(modifier = Modifier.height(16.dp))
-                Divider()
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = "নতুন হোটেল/রেস্টুরেন্ট যুক্ত করুন",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text("নাম") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                OutlinedTextField(
-                    value = menu,
-                    onValueChange = { menu = it },
-                    label = { Text("মালিক (ঐচ্ছিক)") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                OutlinedTextField(
-                    value = address,
-                    onValueChange = { address = it },
-                    label = { Text("ঠিকানা") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                OutlinedTextField(
-                    value = phone,
-                    onValueChange = { phone = it },
-                    label = { Text("ফোন নম্বর") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(12.dp))
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    TextButton(onClick = {
-                        // Cancel button clears and closes the form
-                        showForm = false
-                        name = ""
-                        menu = ""
-                        address = ""
-                        phone = ""
-                    }) {
-                        Text("বাতিল")
-                    }
-
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    Button(onClick = {
-                        // Save only if name is not blank
-                        if (name.isNotBlank()) {
-                            hotelList = hotelList + HotelRestaurant(name, menu, address, phone)
-                            // Clear form and close it
-                            showForm = false
-                            name = ""
-                            menu = ""
-                            address = ""
-                            phone = ""
-                        }
-                    }) {
-                        Text("সংরক্ষণ")
-                    }
+                items(filteredList) { hotel ->
+                    HotelRestaurantCard(hotel)
                 }
             }
         }
+
+        if (showForm) {
+            AddHotelRestaurantForm(
+                onHotelRestaurantAdded = { newHotel ->
+                    viewModel.addHotelRestaurant(newHotel)
+                    showForm = false
+                },
+                onCancel = {
+                    showForm = false
+                }
+            )
+        }
     }
+}
+
+@Composable
+fun HotelRestaurantCard(hotel: HotelRestaurant) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Row(
+            modifier = Modifier.padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            AsyncImage(
+                model = (hotel.photoUrl ?: "").ifBlank { R.drawable.logo },
+                contentDescription = hotel.name,
+                modifier = Modifier
+                    .size(80.dp)
+                    .padding(end = 8.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                contentScale = ContentScale.Crop,
+                error = painterResource(id = R.drawable.logo)
+            )
+            Column {
+                Text(text = hotel.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                if (!hotel.menu.isNullOrBlank()) Text("মালিক: ${hotel.menu}")
+                if (!hotel.address.isNullOrBlank()) Text("ঠিকানা: ${hotel.address}")
+                if (!hotel.phone.isNullOrBlank()) Text("ফোন: ${hotel.phone}")
+            }
+        }
+    }
+}
+
+@Composable
+fun AddHotelRestaurantForm(
+    onHotelRestaurantAdded: (HotelRestaurant) -> Unit,
+    onCancel: () -> Unit
+) {
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        selectedImageUri = uri
+    }
+
+    var name by remember { mutableStateOf("") }
+    var menu by remember { mutableStateOf("") }
+    var address by remember { mutableStateOf("") }
+    var phone by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onCancel,
+        title = { Text("নতুন হোটেল/রেস্টুরেন্ট যোগ করুন") },
+        text = {
+            Column(
+                modifier = Modifier.verticalScroll(rememberScrollState()),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(MaterialTheme.colorScheme.surfaceVariant)
+                        .clickable { launcher.launch("image/*") },
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (selectedImageUri != null) {
+                        Image(
+                            painter = rememberAsyncImagePainter(model = selectedImageUri),
+                            contentDescription = "Selected Image",
+                            modifier = Modifier.fillMaxSize(),
+                            contentScale = ContentScale.Crop
+                        )
+                    } else {
+                        Text("ছবি নির্বাচন করুন", textAlign = TextAlign.Center)
+                    }
+                }
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("নাম") })
+                OutlinedTextField(value = menu, onValueChange = { menu = it }, label = { Text("মালিক (ঐচ্ছিক)") })
+                OutlinedTextField(value = address, onValueChange = { address = it }, label = { Text("ঠিকানা") })
+                OutlinedTextField(value = phone, onValueChange = { phone = it }, label = { Text("ফোন নম্বর") })
+            }
+        },
+        confirmButton = {
+            Button(onClick = {
+                if (name.isNotBlank()) {
+                    onHotelRestaurantAdded(
+                        HotelRestaurant(
+                            name = name,
+                            menu = menu,
+                            address = address,
+                            phone = phone,
+                            photoUrl = selectedImageUri?.toString() ?: ""
+                        )
+                    )
+                }
+            }) {
+                Text("সংরক্ষণ করুন")
+            }
+        },
+        dismissButton = {
+            OutlinedButton(onClick = onCancel) {
+                Text("বাতিল করুন")
+            }
+        }
+    )
 }
