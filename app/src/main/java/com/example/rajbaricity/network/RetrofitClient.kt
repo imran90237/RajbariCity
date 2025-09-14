@@ -1,5 +1,6 @@
 package com.example.rajbaricity.network
 
+import okhttp3.Interceptor
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -21,10 +22,20 @@ object RetrofitClient {
     private val cookieManager = CookieManager()
     private val cookieJar = JavaNetCookieJar(cookieManager)
 
+    // Create an Auth interceptor
+    private val authInterceptor = Interceptor { chain ->
+        val request = chain.request().newBuilder()
+            // Add your auth token here if you have one
+            // .addHeader("Authorization", "Bearer YOUR_AUTH_TOKEN")
+            .build()
+        chain.proceed(request)
+    }
+
     // Create an OkHttpClient and add the interceptor and cookie jar
     private val okHttpClient = OkHttpClient.Builder()
         .cookieJar(cookieJar)
         .addInterceptor(loggingInterceptor)
+        .addInterceptor(authInterceptor) // Add the auth interceptor
         .build()
 
     // Create a lazy-initialized Retrofit instance
@@ -84,5 +95,9 @@ object RetrofitClient {
     val teacherApiService: TeacherApiService by lazy {
         retrofit.create(TeacherApiService::class.java)
     }
-}
 
+    val hospitalApiService: HospitalApiService by lazy {
+        retrofit.create(HospitalApiService::class.java)
+    }
+
+}
