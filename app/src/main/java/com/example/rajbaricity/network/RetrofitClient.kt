@@ -104,4 +104,7 @@ object RetrofitClient {
         retrofit.create(MistryApiService::class.java)
     }
 
+    val nurseryApiService: NurseryApiService by lazy {
+        retrofit.create(NurseryApiService::class.java)
+    }
 }

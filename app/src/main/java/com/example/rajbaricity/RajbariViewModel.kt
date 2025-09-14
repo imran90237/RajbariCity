@@ -60,6 +60,9 @@ class RajbariViewModel : ViewModel() {
     private val _mistries = MutableStateFlow<List<Mistry>>(emptyList())
     val mistries: StateFlow<List<Mistry>> = _mistries
 
+    private val _nurseries = MutableStateFlow<List<Nursery>>(emptyList())
+    val nurseries: StateFlow<List<Nursery>> = _nurseries
+
     private val users = mutableStateListOf<User>()
 
     private val _loggedInUser = MutableStateFlow<User?>(null)
@@ -94,6 +97,7 @@ class RajbariViewModel : ViewModel() {
         getTeachers()
         getHospitals()
         getMistries()
+        getNurseries()
     }
     fun getTeachers() {
         viewModelScope.launch {
@@ -180,6 +184,27 @@ class RajbariViewModel : ViewModel() {
                     "Error adding mistry: ${e.message}"
                 }
                 Log.e("RajbariViewModel", errorMessage, e)
+            }
+        }
+    }
+
+    fun getNurseries() {
+        viewModelScope.launch {
+            try {
+                _nurseries.value = RetrofitClient.nurseryApiService.getAllNurseries()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching nurseries", e)
+            }
+        }
+    }
+
+    fun addNursery(nursery: Nursery) {
+        viewModelScope.launch {
+            try {
+                RetrofitClient.nurseryApiService.createNursery(nursery)
+                getNurseries() // Refresh the list
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error adding nursery", e)
             }
         }
     }
