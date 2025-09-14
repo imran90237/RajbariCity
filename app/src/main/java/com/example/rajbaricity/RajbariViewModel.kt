@@ -57,6 +57,9 @@ class RajbariViewModel : ViewModel() {
     private val _hospitals = MutableStateFlow<List<Hospital>>(emptyList())
     val hospitals: StateFlow<List<Hospital>> = _hospitals
 
+    private val _mistries = MutableStateFlow<List<Mistry>>(emptyList())
+    val mistries: StateFlow<List<Mistry>> = _mistries
+
     private val users = mutableStateListOf<User>()
 
     private val _loggedInUser = MutableStateFlow<User?>(null)
@@ -90,6 +93,7 @@ class RajbariViewModel : ViewModel() {
         getStudents()
         getTeachers()
         getHospitals()
+        getMistries()
     }
     fun getTeachers() {
         viewModelScope.launch {
@@ -145,6 +149,35 @@ class RajbariViewModel : ViewModel() {
                     "Error adding hospital: ${e.code()} - $errorBody"
                 } else {
                     "Error adding hospital: ${e.message}"
+                }
+                Log.e("RajbariViewModel", errorMessage, e)
+            }
+        }
+    }
+
+    fun getMistries() {
+        viewModelScope.launch {
+            try {
+                _mistries.value = RetrofitClient.mistryApiService.getMistries()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching mistries", e)
+            }
+        }
+    }
+
+    fun addMistry(mistry: Mistry) {
+        Log.d("RajbariViewModel", "Attempting to add mistry: $mistry")
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.mistryApiService.addMistry(mistry)
+                Log.d("RajbariViewModel", "Mistry added successfully: $response")
+                getMistries() // Refresh the list
+            } catch (e: Exception) {
+                val errorMessage = if (e is retrofit2.HttpException) {
+                    val errorBody = e.response()?.errorBody()?.string()
+                    "Error adding mistry: ${e.code()} - $errorBody"
+                } else {
+                    "Error adding mistry: ${e.message}"
                 }
                 Log.e("RajbariViewModel", errorMessage, e)
             }
