@@ -41,17 +41,17 @@ fun HospitalScreen(navController: NavController, viewModel: RajbariViewModel = v
 
     // Static Data
     val staticGovtHospitals = listOf(
-        Hospital(id = -1L, name = "রাজবাড়ী সদর হাসপাতাল", address = "রাজবাড়ী শহর", phone = "01712345678", hours = "সকাল ৮টা - রাত ৮টা", hasEmergency = true, mapUrl = "https://maps.app.goo.gl/UcFyYjE6Hv9Z1u3v6", photoUrl = "file:///android_asset/sadorhospital_photo.jpg", type = "সরকারি হাসপাতাল"),
-        Hospital(id = -2L, name = "গোয়ালন্দ উপজেলা স্বাস্থ্য কমপ্লেক্স", address = "গোয়ালন্দ", phone = "01798765432", hours = "সকাল ৯টা - বিকাল ৫টা", hasEmergency = false, mapUrl = "https://maps.app.goo.gl/sample10", photoUrl = "file:///android_asset/gualondo_photo.jpg", type = "সরকারি হাসপাতাল")
+        Hospital(id = -1L, name = "রাজবাড়ী সদর হাসপাতাল", address = "রাজবাড়ী শহর", phone = "01712345678", hours = "সকাল ৮টা - রাত ৮টা", hasEmergency = true, mapUrl = "https://maps.app.goo.gl/UcFyYjE6Hv9Z1u3v6", photoUrl = null, photoResId = R.drawable.sadorhospital_photo, type = "সরকারি হাসপাতাল"),
+        Hospital(id = -2L, name = "গোয়ালন্দ উপজেলা স্বাস্থ্য কমপ্লেক্স", address = "গোয়ালন্দ", phone = "01798765432", hours = "সকাল ৯টা - বিকাল ৫টা", hasEmergency = false, mapUrl = "https://maps.app.goo.gl/sample10", photoUrl = null, photoResId = R.drawable.gualondo_photo, type = "সরকারি হাসপাতাল")
     )
     val staticClinics = listOf(
-        Hospital(id = -3L, name = "রাজবাড়ী ক্লিনিক", address = "রাজবাড়ী", phone = "01711185282", hours = "সকাল ৯টা - বিকাল ৫টা", hasEmergency = false, mapUrl = "https://maps.app.goo.gl/sample4", photoUrl = "file:///android_asset/rajbariclinic_photo.jpg", type = "ক্লিনিক")
+        Hospital(id = -3L, name = "রাজবাড়ী ক্লিনিক", address = "রাজবাড়ী", phone = "01711185282", hours = "সকাল ৯টা - বিকাল ৫টা", hasEmergency = false, mapUrl = "https://maps.app.goo.gl/sample4", photoUrl = null, photoResId = R.drawable.rajbariclinic_photo, type = "ক্লিনিক")
     )
     val staticPrivateHospitals = listOf(
-        Hospital(id = -4L, name = "সেন্ট্রাল হাসপাতাল রাজবাড়ী", address = "বড়পুল, রাজবাড়ী", phone = "01700011111", hours = "সকাল ৯টা - রাত ৯টা", hasEmergency = true, mapUrl = "https://maps.app.goo.gl/sample1", photoUrl = "file:///android_asset/centralhospatal_photo.jpg", type = "বেসরকারি হাসপাতাল")
+        Hospital(id = -4L, name = "সেন্ট্রাল হাসপাতাল রাজবাড়ী", address = "বড়পুল, রাজবাড়ী", phone = "01700011111", hours = "সকাল ৯টা - রাত ৯টা", hasEmergency = true, mapUrl = "https://maps.app.goo.gl/sample1", photoUrl = null, photoResId = R.drawable.centralhospatal_photo, type = "বেসরকারি হাসপাতাল")
     )
     val staticDiagnosticCenters = listOf(
-        Hospital(id = -5L, name = "রাজবাড়ী ডায়াগনস্টিক সেন্টার demo", address = "স্টেশন রোড", phone = "01700077777", hours = "সকাল ৮টা - রাত ৮টা", hasEmergency = false, mapUrl = "https://maps.app.goo.gl/sample7", photoUrl = "file:///android_asset/default_hospital.jpg", type = "ডায়াগনস্টিক সেন্টার")
+        Hospital(id = -5L, name = "রাজবাড়ী ডায়াগনস্টিক সেন্টার demo", address = "স্টেশন রোড", phone = "01700077777", hours = "সকাল ৮টা - রাত ৮টা", hasEmergency = false, mapUrl = "https://maps.app.goo.gl/sample7", photoUrl = null, photoResId = R.drawable.diagnostic_photo, type = "ডায়াগনস্টিক সেন্টার")
     )
 
     val combinedList by remember(hospitalListFromDb, selectedTabIndex) {
@@ -139,7 +139,7 @@ fun HospitalCard(hospital: Hospital) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             AsyncImage(
-                model = hospital.photoUrl,
+                model = hospital.photoResId ?: hospital.photoUrl,
                 contentDescription = hospital.name,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -237,6 +237,7 @@ fun AddHospitalDialog(onDismiss: () -> Unit, onAdd: (Hospital) -> Unit, selected
                                 hasEmergency = hasEmergency,
                                 mapUrl = mapUrl,
                                 photoUrl = imageUri?.toString(),
+                                photoResId = null,
                                 type = selectedType
                             )
                         )
