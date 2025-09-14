@@ -69,6 +69,9 @@ class RajbariViewModel : ViewModel() {
     private val _couriers = MutableStateFlow<List<Courier>>(emptyList())
     val couriers: StateFlow<List<Courier>> = _couriers
 
+    private val _shoppings = MutableStateFlow<List<Shopping>>(emptyList())
+    val shoppings: StateFlow<List<Shopping>> = _shoppings
+
     private val users = mutableStateListOf<User>()
 
     private val _loggedInUser = MutableStateFlow<User?>(null)
@@ -106,6 +109,36 @@ class RajbariViewModel : ViewModel() {
         getNurseries()
         getHotelRestaurants()
         getCouriers()
+        getShoppings()
+    }
+
+    fun getShoppings() {
+        viewModelScope.launch {
+            try {
+                _shoppings.value = RetrofitClient.shoppingApiService.getShoppings()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching shoppings", e)
+            }
+        }
+    }
+
+    fun addShopping(shopping: Shopping) {
+        Log.d("RajbariViewModel", "Attempting to add shopping: $shopping")
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.shoppingApiService.addShopping(shopping)
+                Log.d("RajbariViewModel", "Shopping added successfully: $response")
+                getShoppings() // Refresh the list
+            } catch (e: Exception) {
+                val errorMessage = if (e is retrofit2.HttpException) {
+                    val errorBody = e.response()?.errorBody()?.string()
+                    "Error adding shopping: ${e.code()} - $errorBody"
+                } else {
+                    "Error adding shopping: ${e.message}"
+                }
+                Log.e("RajbariViewModel", errorMessage, e)
+            }
+        }
     }
     fun getCouriers() {
         viewModelScope.launch {
