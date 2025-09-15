@@ -75,6 +75,9 @@ class RajbariViewModel : ViewModel() {
     private val _jobsTrainings = MutableStateFlow<List<JobsTraining>>(emptyList())
     val jobsTrainings: StateFlow<List<JobsTraining>> = _jobsTrainings
 
+    private val _lostAndFounds = MutableStateFlow<List<LostAndFound>>(emptyList())
+    val lostAndFounds: StateFlow<List<LostAndFound>> = _lostAndFounds
+
     private val users = mutableStateListOf<User>()
 
     private val _loggedInUser = MutableStateFlow<User?>(null)
@@ -114,6 +117,36 @@ class RajbariViewModel : ViewModel() {
         getCouriers()
         getShoppings()
         getJobsTrainings()
+        getLostAndFounds()
+    }
+
+    fun getLostAndFounds() {
+        viewModelScope.launch {
+            try {
+                _lostAndFounds.value = RetrofitClient.lostAndFoundApiService.getLostAndFounds()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching lost and found items", e)
+            }
+        }
+    }
+
+    fun addLostAndFound(lostAndFound: LostAndFound) {
+        Log.d("RajbariViewModel", "Attempting to add lost and found item: $lostAndFound")
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.lostAndFoundApiService.addLostAndFound(lostAndFound)
+                Log.d("RajbariViewModel", "Lost and found item added successfully: $response")
+                getLostAndFounds() // Refresh the list
+            } catch (e: Exception) {
+                val errorMessage = if (e is retrofit2.HttpException) {
+                    val errorBody = e.response()?.errorBody()?.string()
+                    "Error adding lost and found item: ${e.code()} - $errorBody"
+                } else {
+                    "Error adding lost and found item: ${e.message}"
+                }
+                Log.e("RajbariViewModel", errorMessage, e)
+            }
+        }
     }
 
     fun getJobsTrainings() {
