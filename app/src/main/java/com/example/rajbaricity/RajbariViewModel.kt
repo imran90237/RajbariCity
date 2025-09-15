@@ -72,6 +72,9 @@ class RajbariViewModel : ViewModel() {
     private val _shoppings = MutableStateFlow<List<Shopping>>(emptyList())
     val shoppings: StateFlow<List<Shopping>> = _shoppings
 
+    private val _jobsTrainings = MutableStateFlow<List<JobsTraining>>(emptyList())
+    val jobsTrainings: StateFlow<List<JobsTraining>> = _jobsTrainings
+
     private val users = mutableStateListOf<User>()
 
     private val _loggedInUser = MutableStateFlow<User?>(null)
@@ -110,6 +113,36 @@ class RajbariViewModel : ViewModel() {
         getHotelRestaurants()
         getCouriers()
         getShoppings()
+        getJobsTrainings()
+    }
+
+    fun getJobsTrainings() {
+        viewModelScope.launch {
+            try {
+                _jobsTrainings.value = RetrofitClient.jobsTrainingApiService.getJobsTrainings()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching jobs and trainings", e)
+            }
+        }
+    }
+
+    fun addJobsTraining(jobsTraining: JobsTraining) {
+        Log.d("RajbariViewModel", "Attempting to add job/training: $jobsTraining")
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.jobsTrainingApiService.addJobsTraining(jobsTraining)
+                Log.d("RajbariViewModel", "Job/training added successfully: $response")
+                getJobsTrainings() // Refresh the list
+            } catch (e: Exception) {
+                val errorMessage = if (e is retrofit2.HttpException) {
+                    val errorBody = e.response()?.errorBody()?.string()
+                    "Error adding job/training: ${e.code()} - $errorBody"
+                } else {
+                    "Error adding job/training: ${e.message}"
+                }
+                Log.e("RajbariViewModel", errorMessage, e)
+            }
+        }
     }
 
     fun getShoppings() {
