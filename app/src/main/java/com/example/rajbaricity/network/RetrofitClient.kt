@@ -127,4 +127,8 @@ object RetrofitClient {
     val lostAndFoundApiService: LostAndFoundApiService by lazy {
         retrofit.create(LostAndFoundApiService::class.java)
     }
+
+    val doctorApiService: DoctorApiService by lazy {
+        retrofit.create(DoctorApiService::class.java)
+    }
 }

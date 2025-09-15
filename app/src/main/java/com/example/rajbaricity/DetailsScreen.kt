@@ -126,7 +126,7 @@ fun HomeContent(
                 "dental" -> DentalScreen()
                 "chormo" -> ChormoScreen()
                 "hormone" -> HormoneScreen()
-                "ent" -> ENTScreen()
+                "ent" -> EntScreen()
                 "eye" -> EyeScreen()
                 "urology" -> UrologyScreen()
                 "gynae" -> GynaeScreen()

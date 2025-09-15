@@ -78,6 +78,9 @@ class RajbariViewModel : ViewModel() {
     private val _lostAndFounds = MutableStateFlow<List<LostAndFound>>(emptyList())
     val lostAndFounds: StateFlow<List<LostAndFound>> = _lostAndFounds
 
+    private val _doctors = MutableStateFlow<List<Doctor>>(emptyList())
+    val doctors: StateFlow<List<Doctor>> = _doctors
+
     private val users = mutableStateListOf<User>()
 
     private val _loggedInUser = MutableStateFlow<User?>(null)
@@ -118,6 +121,36 @@ class RajbariViewModel : ViewModel() {
         getShoppings()
         getJobsTrainings()
         getLostAndFounds()
+        getDoctors()
+    }
+
+    fun getDoctors() {
+        viewModelScope.launch {
+            try {
+                _doctors.value = RetrofitClient.doctorApiService.getDoctors()
+            } catch (e: Exception) {
+                Log.e("RajbariViewModel", "Error fetching doctors", e)
+            }
+        }
+    }
+
+    fun addDoctor(doctor: Doctor) {
+        Log.d("RajbariViewModel", "Attempting to add doctor: $doctor")
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.doctorApiService.addDoctor(doctor)
+                Log.d("RajbariViewModel", "Doctor added successfully: $response")
+                getDoctors() // Refresh the list
+            } catch (e: Exception) {
+                val errorMessage = if (e is retrofit2.HttpException) {
+                    val errorBody = e.response()?.errorBody()?.string()
+                    "Error adding doctor: ${e.code()} - $errorBody"
+                } else {
+                    "Error adding doctor: ${e.message}"
+                }
+                Log.e("RajbariViewModel", errorMessage, e)
+            }
+        }
     }
 
     fun getLostAndFounds() {
