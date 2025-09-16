@@ -46,11 +46,14 @@ fun LostAndFoundScreen(viewModel: RajbariViewModel = viewModel()) {
 
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = { showForm = true }) {
+            FloatingActionButton(
+                onClick = { showForm = true },
+                containerColor = MaterialTheme.colorScheme.primary
+            ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Lost/Found Item",
-                    tint = Color.Black
+                    tint = Color.White
                 )
             }
         },
@@ -59,15 +62,26 @@ fun LostAndFoundScreen(viewModel: RajbariViewModel = viewModel()) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
                 .padding(paddingValues)
+                .padding(16.dp)
         ) {
             Text(
                 text = "🧳 হারানো এবং পাওয়া",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+            )
+
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("হারানো বা পাওয়া জিনিস খুঁজুন") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
             )
 
             TabRow(selectedTabIndex = selectedTab) {
@@ -81,22 +95,19 @@ fun LostAndFoundScreen(viewModel: RajbariViewModel = viewModel()) {
                 }
             }
 
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = { searchQuery = it },
-                label = { Text("হারানো বা পাওয়া জিনিস খুঁজুন") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-            )
+            Spacer(modifier = Modifier.height(8.dp))
 
-            LazyColumn(modifier = Modifier.weight(1f)) {
-                val filteredList = lostAndFounds.filter {
-                    val matchTab = if (selectedTab == 0) it.isLost else !it.isLost
-                    val matchSearch = it.title.contains(searchQuery, ignoreCase = true) ||
-                            it.description.contains(searchQuery, ignoreCase = true)
-                    matchTab && matchSearch
-                }
+            val filteredList = lostAndFounds.filter {
+                val matchTab = if (selectedTab == 0) it.isLost else !it.isLost
+                val matchSearch = it.title.contains(searchQuery, ignoreCase = true) ||
+                        it.description.contains(searchQuery, ignoreCase = true)
+                matchTab && matchSearch
+            }
+
+            LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
                 items(filteredList) { item ->
                     LostAndFoundCard(item)
                 }
@@ -121,12 +132,11 @@ fun LostAndFoundScreen(viewModel: RajbariViewModel = viewModel()) {
 fun LostAndFoundCard(item: LostAndFound) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
-            modifier = Modifier.padding(8.dp),
+            modifier = Modifier.padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             AsyncImage(
@@ -134,11 +144,11 @@ fun LostAndFoundCard(item: LostAndFound) {
                 contentDescription = item.title,
                 modifier = Modifier
                     .size(80.dp)
-                    .padding(end = 8.dp)
                     .clip(RoundedCornerShape(8.dp)),
                 contentScale = ContentScale.Crop,
                 error = painterResource(id = R.drawable.logo)
             )
+            Spacer(modifier = Modifier.width(16.dp))
             Column {
                 Text(text = item.title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                 Text(text = "বিবরণ: ${item.description}")
@@ -175,9 +185,12 @@ fun AddLostAndFoundForm(
                     Text("পেয়েছে")
                 }
 
+                Spacer(modifier = Modifier.height(8.dp))
+
                 Box(
                     modifier = Modifier
-                        .size(120.dp)
+                        .fillMaxWidth()
+                        .height(150.dp)
                         .clip(RoundedCornerShape(8.dp))
                         .background(MaterialTheme.colorScheme.surfaceVariant)
                         .clickable { launcher.launch("image/*") },
@@ -194,11 +207,15 @@ fun AddLostAndFoundForm(
                         Text("ছবি নির্বাচন করুন", textAlign = TextAlign.Center)
                     }
                 }
+                Spacer(modifier = Modifier.height(8.dp))
 
-                OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("শিরোনাম") })
-                OutlinedTextField(value = description, onValueChange = { description = it }, label = { Text("বিবরণ") })
-                OutlinedTextField(value = contactName, onValueChange = { contactName = it }, label = { Text("যোগাযোগের নাম") })
-                OutlinedTextField(value = contactPhone, onValueChange = { contactPhone = it }, label = { Text("যোগাযোগের ফোন") })
+                OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("শিরোনাম") }, modifier = Modifier.fillMaxWidth())
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(value = description, onValueChange = { description = it }, label = { Text("বিবরণ") }, modifier = Modifier.fillMaxWidth())
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(value = contactName, onValueChange = { contactName = it }, label = { Text("যোগাযোগের নাম") }, modifier = Modifier.fillMaxWidth())
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(value = contactPhone, onValueChange = { contactPhone = it }, label = { Text("যোগাযোগের ফোন") }, modifier = Modifier.fillMaxWidth())
             }
         },
         confirmButton = {
@@ -220,6 +237,7 @@ fun AddLostAndFoundForm(
             OutlinedButton(onClick = onCancel) {
                 Text("বাতিল করুন")
             }
-        }
+        },
+        shape = RoundedCornerShape(16.dp)
     )
 }

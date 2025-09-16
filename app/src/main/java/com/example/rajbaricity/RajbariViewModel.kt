@@ -826,10 +826,12 @@ class RajbariViewModel : ViewModel() {
         _loggedInUser.value = null
     }
 
-    fun updateUserProfile(newUsername: String, newEmail: String) {
+    fun updateUserProfile(newUsername: String, newEmail: String, newPhone: String, newImageUri: Uri?) {
         _loggedInUser.value = _loggedInUser.value?.copy(
             username = newUsername,
-            email = newEmail
+            email = newEmail,
+            phone = newPhone,
+            profileImageUrl = newImageUri?.toString() ?: _loggedInUser.value?.profileImageUrl
         )
     }
 
