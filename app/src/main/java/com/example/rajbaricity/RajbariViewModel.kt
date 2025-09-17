@@ -424,9 +424,13 @@ class RajbariViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 RetrofitClient.studentApiService.likeStudent(id)
-                getStudents() // Refresh the list to show updated like count
             } catch (e: Exception) {
                 Log.e("RajbariViewModel", "Error liking student", e)
+                // This error is likely due to an optimistic locking failure on the server.
+                // We catch it here to prevent the app from crashing and refresh the student list
+                // to get the latest data.
+            } finally {
+                getStudents() // Refresh the list to show updated like count
             }
         }
     }

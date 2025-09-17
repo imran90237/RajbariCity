@@ -30,6 +30,9 @@ import com.example.rajbaricity.ui.RajbariViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WantToStudyPage(viewModel: RajbariViewModel = viewModel()) {
+    LaunchedEffect(Unit) {
+        viewModel.getStudents()
+    }
     val studentList by viewModel.students.collectAsState()
     var showForm by remember { mutableStateOf(false) }
     var searchText by remember { mutableStateOf("") }
@@ -45,7 +48,7 @@ fun WantToStudyPage(viewModel: RajbariViewModel = viewModel()) {
             .fillMaxSize()
             .padding(16.dp)) {
 
-            Text("📚 পড়তে চাই/শিক্ষক চাই\n", fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text("📚 পড়তে চাই\n", fontSize = 20.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(8.dp))
 
             OutlinedTextField(
@@ -148,7 +151,6 @@ fun StudentCard(student: Student, onLike: () -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentRequestForm(
     onCancel: () -> Unit,
@@ -174,100 +176,71 @@ fun StudentRequestForm(
     ) { uri: Uri? -> imageUri = uri }
 
     Surface(
-        color = MaterialTheme.colorScheme.background.copy(alpha = 0.97f),
-        shape = RoundedCornerShape(12.dp),
-        shadowElevation = 8.dp,
+        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f),
         modifier = Modifier
             .fillMaxSize()
-            .padding(12.dp)
+            .padding(16.dp)
     ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            item {
-                Text("নতুন শিক্ষক আবেদন", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-            }
+        Column(Modifier.padding(16.dp)) {
+            Text("নতুন ছাত্র/ছাত্রী যোগ করুন", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(8.dp))
 
-            item {
-                SmallInputField("নাম", name) { name = it }
-                SmallInputField("টাইটেল", title) { title = it }
-                SmallInputField("বিষয়", subject) { subject = it }
-                SmallInputField("সপ্তাহে কয়দিন", days) { days = it }
-                SmallInputField("বেতন", salary) { salary = it }
-                SmallInputField("লিঙ্গ", gender) { gender = it }
-                SmallInputField("থানা", thana) { thana = it }
-                SmallInputField("ঠিকানা", address) { address = it }
-                SmallInputField("ফোন", phone) { phone = it }
-            }
+            // Two-column layout
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
+                    OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("নাম") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = subject, onValueChange = { subject = it }, label = { Text("বিষয়") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = salary, onValueChange = { salary = it }, label = { Text("বেতন") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = thana, onValueChange = { thana = it }, label = { Text("থানা") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = phone, onValueChange = { phone = it }, label = { Text("ফোন") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                }
 
-            item {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { launcher.launch("image/*") }
-                        .padding(vertical = 8.dp)
-                ) {
-                    if (imageUri != null) {
-                        Image(
-                            painter = rememberAsyncImagePainter(imageUri),
-                            contentDescription = "Image",
-                            modifier = Modifier.size(60.dp),
-                            contentScale = ContentScale.Crop
-                        )
-                    } else {
-                        Image(
-                            painter = painterResource(id = R.drawable.student),
-                            contentDescription = "Default Image",
-                            modifier = Modifier.size(60.dp),
-                            contentScale = ContentScale.Crop
-                        )
-                    }
-                    Spacer(modifier = Modifier.width(12.dp))
-                    Text("ছবি নির্বাচন করুন", fontSize = 14.sp)
+                Column(modifier = Modifier.weight(1f).padding(start = 8.dp)) {
+                    OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("টাইটেল") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = days, onValueChange = { days = it }, label = { Text("দিন") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = gender, onValueChange = { gender = it }, label = { Text("লিঙ্গ") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
+                    OutlinedTextField(value = address, onValueChange = { address = it }, label = { Text("ঠিকানা") }, modifier = Modifier.fillMaxWidth(), singleLine = true)
                 }
             }
 
-            item {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Button(
-                        onClick = onCancel,
-                        modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color.LightGray)
-                    ) {
-                        Text("বাতিল", color = Color.Black)
-                    }
+            Spacer(modifier = Modifier.height(12.dp))
 
-                    Button(
-                        onClick = {
-                            onSubmit(name, title, subject, days, salary, gender, thana, address, phone, imageUri)
-                        },
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Text("জমা দিন")
-                    }
-                }
+            // Image Picker
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { launcher.launch("image/*") }
+                    .padding(vertical = 6.dp)
+            ) {
+                Image(
+                    painter = if (imageUri != null) rememberAsyncImagePainter(imageUri)
+                    else painterResource(id = R.drawable.student),
+                    contentDescription = "ছবি",
+                    modifier = Modifier.size(70.dp),
+                    contentScale = ContentScale.Crop
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text("ছবি যোগ করুন", color = MaterialTheme.colorScheme.primary)
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Action Buttons
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                TextButton(onClick = onCancel) { Text("বাতিল") }
+                Spacer(modifier = Modifier.width(12.dp))
+                Button(
+                    onClick = {
+                        onSubmit(name, title, subject, days, salary, gender, thana, address, phone, imageUri)
+                    },
+                    enabled = name.isNotBlank() && title.isNotBlank()
+                ) { Text("সাবমিট") }
             }
         }
     }
 }
 
-@Composable
-fun SmallInputField(label: String, value: String, onValueChange: (String) -> Unit) {
-    OutlinedTextField(
-        value = value,
-        onValueChange = onValueChange,
-        label = { Text(label, fontSize = 13.sp) },
-        textStyle = LocalTextStyle.current.copy(fontSize = 14.sp),
-        singleLine = true,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(56.dp)
-    )
-}
