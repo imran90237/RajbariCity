@@ -222,10 +222,10 @@ fun TimeScheduleTab(dynamicBusTimes: List<Bustime>, viewModel: RajbariViewModel)
                     .padding(vertical = 4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("বাস", fontSize = 16.sp, modifier = Modifier.weight(1f))
-                Text("স্থান", fontSize = 16.sp, modifier = Modifier.weight(1f))
-                Text("গন্তব্য", fontSize = 16.sp, modifier = Modifier.weight(1f))
-                Text("সময়", fontSize = 16.sp, modifier = Modifier.weight(1f))
+                Text("বাস", fontSize = 16.sp, modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
+                Text("স্থান", fontSize = 16.sp, modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
+                Text("গন্তব্য", fontSize = 16.sp, modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
+                Text("সময়", fontSize = 16.sp, modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold)
             }
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -361,7 +361,7 @@ fun AddTimeDialog(
                 OutlinedTextField(value = from, onValueChange = { from = it }, label = { Text("যাত্রা শুরুর স্থান") })
                 OutlinedTextField(value = to, onValueChange = { to = it }, label = { Text("গন্তব্য") })
                 OutlinedTextField(value = time, onValueChange = { time = it }, label = { Text("সময়") })
-                OutlinedTextField(value = contact, onValueChange = { contact = it }, label = { Text("যোগাযোগ") })
+//                OutlinedTextField(value = contact, onValueChange = { contact = it }, label = { Text("যোগাযোগ") })
             }
         },
         shape = RoundedCornerShape(12.dp)
