@@ -1,5 +1,6 @@
 package com.example.rajbaricity
 
+import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,6 +45,7 @@ fun ProfileScreen(navController: NavController, viewModel: RajbariViewModel) {
     var showDialog by remember { mutableStateOf(false) }
     var dialogTitle by remember { mutableStateOf("") }
     var dialogText by remember { mutableStateOf("") }
+    val context = LocalContext.current
 
     if (showDialog) {
         AlertDialog(
@@ -105,7 +108,7 @@ fun ProfileScreen(navController: NavController, viewModel: RajbariViewModel) {
                     }
                     DrawerItem("🔔 নোটিফিকেশন") {
                         scope.launch { drawerState.close() }
-                        navController.navigate("notification")
+                        navController.navigate("notifications")
                     }
                     DrawerItem("👤 প্রোফাইল") {
                         scope.launch { drawerState.close() }
@@ -148,7 +151,7 @@ fun ProfileScreen(navController: NavController, viewModel: RajbariViewModel) {
                                 onClick = {
                                     showMenu = false
                                     dialogTitle = "Authority"
-                                    dialogText = "This app is managed by the Rajbari City Corporation. For any queries, please contact the city corporation office."
+                                    dialogText = "This app is managed by the Rajbari City Co...... For any queries, please contact the city co..... office."
                                     showDialog = true
                                 }
                             )
@@ -192,14 +195,15 @@ fun ProfileScreen(navController: NavController, viewModel: RajbariViewModel) {
                 userName = userName,
                 userEmail = userEmail,
                 onEditProfile = { navController.navigate("edit_profile") },
-                onNotifications = { navController.navigate("notification") },
+                onNotifications = { navController.navigate("notifications") },
                 onContact = { navController.navigate("contact") },
                 onLogout = {
                     viewModel.logout()
                     navController.navigate("login") {
                         popUpTo("home") { inclusive = true }
                     }
-                }
+                },
+                onFacebookPage = { navController.navigate("contact") }
             )
         }
     }
@@ -284,7 +288,8 @@ private fun ProfileContent(
     onEditProfile: () -> Unit,
     onNotifications: () -> Unit,
     onContact: () -> Unit,
-    onLogout: () -> Unit
+    onLogout: () -> Unit,
+    onFacebookPage: () -> Unit
 ) {
     Column(
         modifier = modifier,
@@ -315,10 +320,10 @@ private fun ProfileContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        ProfileActionCard("✏ প্রোফাইল সম্পাদনা করুন", onClick = onEditProfile)
+        ProfileActionCard("✏ প্রোফাইল আপডেট করুন", onClick = onEditProfile)
         ProfileActionCard("🔔 নোটিফিকেশন", onClick = onNotifications)
         ProfileActionCard("📞 যোগাযোগ করুন", onClick = onContact)
-        ProfileActionCard("📘 Facebook Page", onClick = {}) // Implement later
+        ProfileActionCard("📘 Facebook Page", onClick = onFacebookPage)
         ProfileActionCard("🚪 লগআউট", isDanger = true, onClick = onLogout)
     }
 }

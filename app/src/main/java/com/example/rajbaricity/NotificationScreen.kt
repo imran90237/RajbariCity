@@ -3,16 +3,19 @@ package com.example.rajbaricity
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotificationScreen() {
+fun NotificationScreen(navController: NavController) {
     // Sample notifications (replace with real data if needed)
     val notifications = listOf(
         "রাজবাড়ী শহরের মেইন রোডে সংস্কার কাজ চলমান।",
@@ -25,7 +28,15 @@ fun NotificationScreen() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("নোটিফিকেশন", style = MaterialTheme.typography.titleLarge) }
+                title = { Text("নোটিফিকেশন", style = MaterialTheme.typography.titleLarge) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back"
+                        )
+                    }
+                }
             )
         }
     ) { padding ->

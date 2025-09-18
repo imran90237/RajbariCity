@@ -69,7 +69,7 @@ fun DetailsScreen(
                     viewModel = viewModel
                 )
                 "profile" -> ProfileScreen(navController = navController, viewModel = viewModel)
-                "notification" -> NotificationScreen()
+                "notification" -> NotificationScreen(navController = navController)
             }
         }
     }

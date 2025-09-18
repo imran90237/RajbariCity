@@ -75,8 +75,12 @@ fun AppNavGraph(navController: NavHostController, viewModel: RajbariViewModel) {
             EditProfileScreen(navController, viewModel)
         }
 
+        composable("contact") {
+            ContactScreen(navController)
+        }
+
         composable("notifications") {
-            NotificationScreen()
+            NotificationScreen(navController)
         }
 
         // 🔥 Dynamic section details page

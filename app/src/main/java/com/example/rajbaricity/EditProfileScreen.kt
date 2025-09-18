@@ -16,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -25,13 +24,10 @@ import com.example.rajbaricity.ui.RajbariViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun EditProfileScreen(
-    navController: NavController,
-    viewModel: RajbariViewModel
-) {
+fun EditProfileScreen(navController: NavController, viewModel: RajbariViewModel) {
     var name by remember { mutableStateOf(viewModel.loggedInUserName ?: "") }
     var email by remember { mutableStateOf(viewModel.loggedInUserEmail ?: "") }
-    var phone by remember { mutableStateOf(viewModel.loggedInUser.value?.phone ?: "") }
+    var phone by remember { mutableStateOf("") } // Assuming phone is not available in viewModel yet
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
@@ -114,7 +110,7 @@ fun EditProfileScreen(
 
             Button(
                 onClick = {
-                    viewModel.updateUserProfile(name, email, phone, selectedImageUri)
+                    // viewModel.updateUserProfile(name, email, phone, selectedImageUri)
                     navController.popBackStack()
                 },
                 modifier = Modifier
