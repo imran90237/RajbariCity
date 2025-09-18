@@ -40,7 +40,7 @@ fun ProfileScreen(navController: NavController, viewModel: RajbariViewModel) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var showMenu by remember { mutableStateOf(false) }
-    var isDarkMode by remember { mutableStateOf(false) }
+    val isDarkMode by viewModel.isDarkMode.collectAsState()
 
     var showDialog by remember { mutableStateOf(false) }
     var dialogTitle by remember { mutableStateOf("") }
@@ -79,7 +79,7 @@ fun ProfileScreen(navController: NavController, viewModel: RajbariViewModel) {
                     ) {
                         // Dark Mode Button (top right)
                         IconButton(
-                            onClick = { isDarkMode = !isDarkMode },
+                            onClick = { viewModel.toggleDarkMode() },
                             modifier = Modifier.align(Alignment.TopEnd)
                         ) {
                             Icon(
@@ -95,7 +95,7 @@ fun ProfileScreen(navController: NavController, viewModel: RajbariViewModel) {
                     // User Info Section
                     UserHeader(userName, userImageUri)
 
-                    Divider(
+                    HorizontalDivider(
                         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
                         thickness = 2.dp,
                         modifier = Modifier.padding(vertical = 12.dp)

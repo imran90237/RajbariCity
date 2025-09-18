@@ -10,6 +10,7 @@ import com.example.rajbaricity.network.RetrofitClient
 import com.example.rajbaricity.utils.ValidationUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import retrofit2.Call
@@ -17,6 +18,13 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class RajbariViewModel : ViewModel() {
+
+    private val _isDarkMode = MutableStateFlow(false)
+    val isDarkMode: StateFlow<Boolean> = _isDarkMode.asStateFlow()
+
+    fun toggleDarkMode() {
+        _isDarkMode.value = !_isDarkMode.value
+    }
 
     private val _donors = MutableStateFlow<List<BloodDonor>>(emptyList())
     val donors: StateFlow<List<BloodDonor>> = _donors
