@@ -33,12 +33,29 @@ fun ProfileScreen(navController: NavController, viewModel: RajbariViewModel) {
     val userName = viewModel.loggedInUserName ?: "ব্যবহারকারী"
     val userEmail = viewModel.loggedInUserEmail ?: "example@email.com"
     val userImageUri: Uri? = viewModel.loggedInUserImageUri
-    
+
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
     var showMenu by remember { mutableStateOf(false) }
     var isDarkMode by remember { mutableStateOf(false) }
+
+    var showDialog by remember { mutableStateOf(false) }
+    var dialogTitle by remember { mutableStateOf("") }
+    var dialogText by remember { mutableStateOf("") }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(dialogTitle) },
+            text = { Text(dialogText) },
+            confirmButton = {
+                Button(onClick = { showDialog = false }) {
+                    Text("OK")
+                }
+            }
+        )
+    }
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -126,10 +143,42 @@ fun ProfileScreen(navController: NavController, viewModel: RajbariViewModel) {
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false }
                         ) {
-                            DropdownMenuItem(text = { Text("Authority") }, onClick = { showMenu = false })
-                            DropdownMenuItem(text = { Text("About App") }, onClick = { showMenu = false })
-                            DropdownMenuItem(text = { Text("About Developer") }, onClick = { showMenu = false })
-                            DropdownMenuItem(text = { Text("Privacy Policy") }, onClick = { showMenu = false })
+                            DropdownMenuItem(
+                                text = { Text("Authority") },
+                                onClick = {
+                                    showMenu = false
+                                    dialogTitle = "Authority"
+                                    dialogText = "This app is managed by the Rajbari City Corporation. For any queries, please contact the city corporation office."
+                                    showDialog = true
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("About App") },
+                                onClick = {
+                                    showMenu = false
+                                    dialogTitle = "About App"
+                                    dialogText = "This is an app about Rajbari City. It provides various information and services related to the city."
+                                    showDialog = true
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("About Developer") },
+                                onClick = {
+                                    showMenu = false
+                                    dialogTitle = "About Developer"
+                                    dialogText = "This app is developed by a passionate team of developers at Rajbari City Corporation, dedicated to providing useful applications for the citizens."
+                                    showDialog = true
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Privacy Policy") },
+                                onClick = {
+                                    showMenu = false
+                                    dialogTitle = "Privacy Policy"
+                                    dialogText = "Your privacy is important to us. We do not collect any personal information from our users. All data is stored locally on your device and is not shared with any third parties. We are committed to protecting your data and ensuring a safe and secure experience."
+                                    showDialog = true
+                                }
+                            )
                         }
                     }
                 )
